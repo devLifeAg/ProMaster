@@ -5,14 +5,14 @@ import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardContent from "./pages/Dashboard/Dashboard";
 import ShowcaseContent from "./pages/ShowCase/ShowCaseContent";
 // import ShowcaseContent from "./components/ShowcaseContent";
-// import các component còn lại tương tự...
+// import các component ßcòn lại tương tự...
 
 function App() {
   return (
     <>
       <ToastContainer />
-      <BrowserRouter>
-        <Routes>
+      <BrowserRouter basename='/ProMaster'>
+        <Routes>ß
           <Route path="/" element={<Login />} />
           
           <Route path="/Dashboard" element={<DashboardLayout />}>
