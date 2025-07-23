@@ -29,7 +29,7 @@ const getTagInfo = (tag: number): { text: string; color: string } | null => {
 export default function ShowcaseItem({
     title,
     tag = 0,
-    image = "/assets/image.jpg",
+    image = "/ProMaster/assets/image.jpg",
     availability = "150/500 Available",
     address = "Jln Bersatu, Taman Bukit Serdang",
     pinned = false,
@@ -82,7 +82,7 @@ export default function ShowcaseItem({
                         </div>
                         <div className="rounded-full px-2 py-1 w-fit mb-2" style={{ color: colors.whiteCloud, fontWeight: 600, fontSize: 14, fontFamily: fonts.outfit, background: colors.availableStatus }}>{availability}</div>
                     </div>
-                    <img className="w-16 h-16" src="/assets/icons/buy.png" alt="buy_logo" />
+                    <img className="w-16 h-16" src="/ProMaster/assets/icons/buy.png" alt="buy_logo" />
                 </div>
 
                 <div style={{ color: colors.greyInputText, fontSize: 14, fontFamily: fonts.outfit }}>{address}</div>

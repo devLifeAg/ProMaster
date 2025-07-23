@@ -12,7 +12,7 @@ function App() {
     <>
       <ToastContainer />
       <BrowserRouter basename='/ProMaster/'>
-        <Routes>ß
+        <Routes>
           <Route path="/" element={<Login />} />
           
           <Route path="/Dashboard" element={<DashboardLayout />}>

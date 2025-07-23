@@ -42,7 +42,7 @@ export default function DashboardContent() {
           <div className="flex gap-4">
             {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
               <div key={idx} className="relative w-1/3 rounded-xl overflow-hidden shadow cursor-pointer">
-                <img src='/assets/image.jpg' alt={project} className="w-full h-64 object-cover" />
+                <img src='/ProMaster/assets/image.jpg' alt={project} className="w-full h-64 object-cover" />
                 <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">Selling Fast</div>
                 <div className="absolute bottom-2 left-2 text-white">
                   <p className="font-semibold text-sm">{project}</p>
