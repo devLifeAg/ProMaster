@@ -1,0 +1,145 @@
+import { PieChart, Pie, Cell } from "recharts";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo } from "react";
+import colors from '../styles/colors';
+
+interface CircleChartProps {
+  title: string;
+  total: number;
+  data: {
+    label: string;
+    value: number;
+    color: string;
+  }[];
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const hexToRGBA = (hex: string, opacity: number) => {
+  const c = hex.replace("#", "");
+  const bigint = parseInt(c, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r},${g},${b},${opacity})`;
+};
+
+export const CircleChart = ({ title, total, data }: CircleChartProps) => {
+  const totalValue = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
+
+  // Tính tọa độ cho badge
+  const badges = useMemo(() => {
+    let startAngle = 90;
+    return data.map((item) => {
+      const percent = item.value / totalValue;
+      const angle = percent * 360;
+      const midAngle = startAngle - angle / 2;
+
+      const RADIAN = Math.PI / 180;
+      const radius = 90; // Đẩy badge ra xa hơn chart
+
+      const x = 110 + radius * Math.cos(-midAngle * RADIAN);
+      const y = 110 + radius * Math.sin(-midAngle * RADIAN);
+
+      startAngle -= angle;
+
+      return {
+        ...item,
+        percent: Math.round(percent * 100),
+        x,
+        y,
+      };
+    });
+  }, [data, totalValue]);
+
+  return (
+  <div className="w-full rounded-xl border p-6 shadow-sm">
+
+    {/* Title */}
+    <p style={{ color: colors.blackDark, fontSize: 18, fontWeight: 500 }}>{title}</p>
+
+    <div className="flex items-center justify-between">
+      
+      <ChevronLeft className="text-gray-300 cursor-pointer" />
+      
+      <div className="flex items-center flex-1 justify-center">
+
+        <div className="relative">
+          <PieChart width={220} height={220}>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={90}
+              startAngle={90}
+              endAngle={-270}
+              paddingAngle={0.5}
+              dataKey="value"
+              stroke="#fff" // Viền màu trắng
+              strokeWidth={6} // Viền dày hơn
+              labelLine={false}
+            >
+              {data.map((entry, idx) => (
+                <Cell
+                  key={idx}
+                  fill={hexToRGBA(entry.color, 0.8)} // 80% opacity cho Pie
+                />
+              ))}
+            </Pie>
+          </PieChart>
+
+          {/* Center text */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <p style={{ color: colors.blackDark, fontSize: 14 }}>Total Available</p>
+            <p style={{ color: colors.blackDark, fontSize: 24, fontWeight: 700 }}>{total}</p>
+          </div>
+
+          {/* Badge percent */}
+          {badges.map((item, idx) => (
+            <div
+              key={idx}
+              style={{
+                position: 'absolute',
+                left: item.x - 20,
+                top: item.y - 12,
+                width: 40,
+                height: 24,
+                background: hexToRGBA(item.color, 0.9),
+                color: "#fff",
+                borderRadius: "8px",
+                fontSize: "14px",
+                textAlign: "center",
+                lineHeight: "24px",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                pointerEvents: "none"
+              }}
+            >
+              {item.percent}%
+            </div>
+          ))}
+        </div>
+
+        <div className="ml-8 space-y-3">
+          {data.map((item, idx) => (
+            <div key={idx} className="flex items-center gap-2 text-sm">
+              <span
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              <div>
+                <p className="text-black font-medium">{item.label}</p>
+                <p className="text-gray-400 text-xs">{item.value} units</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
+
+      <ChevronRight className="text-gray-300 cursor-pointer" />
+      
+    </div>
+  </div>
+);
+
+};
