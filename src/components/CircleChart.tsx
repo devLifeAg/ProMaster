@@ -61,7 +61,7 @@ export const CircleChart = ({ title, total, data }: CircleChartProps) => {
       
       <ChevronLeft className="text-gray-300 cursor-pointer" />
       
-      <div className="flex items-center flex-1 justify-center">
+      <div className="flex items-center flex-1 justify-center cursor-pointer">
 
         <div className="relative">
           <PieChart width={220} height={220}>

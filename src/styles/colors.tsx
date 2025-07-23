@@ -18,7 +18,10 @@ const colors = {
 
   availableStatus: '#059669',
   brookedStatus: '#3B82F6',
-  reserveStatus: '#F97316'
+  reserveStatus: '#F97316',
+
+  activeStatus: '#25AD5E',
+  waitingStatus: '#F5C30B'
 };
 
 

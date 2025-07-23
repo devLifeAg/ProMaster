@@ -4,8 +4,12 @@ import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import warningImg from '../../assets/warning.png';
 import CustomInput from '../../components/CustomInput';
-
+import { getDeviceInfo } from "./getDeviceInfo";
+import { showSuccessToast, showErrorToast } from '../../components/ToasService';
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 // Component LanguageDialog
+
 const LanguageDialog = ({ currentLang, onSelect }: { currentLang: string; onSelect: (lang: string) => void }) => {
   const languages = [
     { label: 'English', value: 'en' },
@@ -43,7 +47,8 @@ const Login: React.FC = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [blockOutsideClick, setBlockOutsideClick] = useState(false);
-
+  const [isSubmit, setIsSubmit] = useState(false);
+  const navigate = useNavigate();
 
   const [animationSetting, setAnimationSetting] = useState<'open' | 'closing'>('open');
   const [currentLang, setCurrentLang] = useState('en');
@@ -85,6 +90,46 @@ const Login: React.FC = () => {
       setShowLogin(true);
     };
   };
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmit(true);
+    const formData = new FormData(e.currentTarget);
+    const userName = formData.get("userName") as string;
+    const password = formData.get("password") as string;
+
+    const deviceInfo = await getDeviceInfo(); // giả sử đã có hàm này
+
+    const payload = {
+      userName,
+      password,
+      languageId: 1,
+      ...deviceInfo
+    };
+
+    // console.log("📦 Payload gửi đi:\n" + JSON.stringify(payload, null, 2));
+    // showSuccessToast("Login success!");
+    // navigate('/Dashboard');
+    try {
+      const res = await axios.post("https://ww3.mhw.com.my:1606/promaster/promasterauthentication/login", payload);
+
+      if (res.status === 200) {
+        showSuccessToast("Login success!");
+        navigate('/Dashboard');
+        setIsSubmit(false);
+      } else {
+        showErrorToast("Login fail");
+      }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      showErrorToast(
+        error.response?.data?.message || 'Login failed'
+      );
+        setIsSubmit(false);
+
+    }
+  };
+
 
 
   return (
@@ -311,16 +356,16 @@ const Login: React.FC = () => {
             Log In
           </h2>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <CustomInput
-                label="Userame"
-                required
-              />
+              label="Username" name="userName"
+              required
+            />
 
-                        <CustomInput
-                label="Password"
-                required
-              />
+            <CustomInput
+              label="Password" name="password" inputType={'password'}
+              required
+            />
 
             <input className="hidden me-4" type="checkbox" id="check-round01" />
             <label htmlFor="check-round01" className="flex items-center h-10 px-2 rounded cursor-pointer">
@@ -330,10 +375,11 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="mx-auto font-bold block"
-              style={{ background: colors.redRuby, fontSize: 18, fontFamily: fonts.outfit, color: colors.whiteCloud, width: 352, height: 48, borderRadius: 30 }}
+              disabled={isSubmit}
+              className="mx-auto font-bold cursor-pointer block" onClick={() => handleLogin}
+              style={{ background: isSubmit ? colors.greyCalm : colors.redRuby, fontSize: 18, fontFamily: fonts.outfit, color: colors.whiteCloud, width: 352, height: 48, borderRadius: 30 }}
             >
-              Log In
+              {isSubmit ? "Logging in..." : "Log In"}
             </button>
 
             <div style={{ fontSize: 16, fontFamily: fonts.outfit, color: colors.greyInputText, textAlign: 'center', marginBottom: 48 }}>

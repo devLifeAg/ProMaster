@@ -12,8 +12,7 @@ export const Button = ({ variant = "default", className, style, ...props }: Butt
     default: "", // Mặc định là để trống để người dùng tự truyền màu qua className
     ghost: "bg-transparent hover:bg-white text-white hover:text-red-500 border border-white",
     destructive: "bg-red-600 text-white hover:bg-red-700",
-    custom: "" // Toàn quyền bên ngoài control
-  };
+    custom: ""};
 
   return (
     <button

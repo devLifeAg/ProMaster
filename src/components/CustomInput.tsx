@@ -1,13 +1,14 @@
 import React from 'react';
 import fonts from '../styles/fonts';
 import colors from '../styles/colors';
-
 interface Option {
     label: string;
     value: string;
 }
 
 interface CustomInputProps {
+    name?: string,
+    inputType?: string,
     label: string;
     required?: boolean;
     type?: 0 | 1 | 2;
@@ -23,7 +24,9 @@ interface CustomInputProps {
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
+    name,
     label,
+    inputType = 'text',
     required = false,
     type = 0,
     value,
@@ -158,7 +161,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                     </div>
 
                     <input
-                        type="tel"
+                        type='tel'
                         value={value}
                         onChange={(e) => onChange?.(e.target.value)}
                         disabled={disabled}
@@ -171,7 +174,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
                 </div>
             ) : (
                 <input
-                    type="text"
+                name={name}
+                    type={inputType}
                     value={value}
                     onChange={(e) => onChange?.(e.target.value)}
                     disabled={disabled}
