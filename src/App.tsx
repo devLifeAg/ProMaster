@@ -11,7 +11,7 @@ function App() {
   return (
     <>
       <ToastContainer />
-      <BrowserRouter basename='/ProMaster'>
+      <BrowserRouter basename='/ProMaster/'>
         <Routes>ß
           <Route path="/" element={<Login />} />
           
