@@ -1,5 +1,5 @@
 import React from 'react';
-import colors from '../styles/colors';
+import colors, {hexToRgba} from '../styles/colors';
 
 // Loại trạng thái
 type StatusType = 'Booking' | 'Appointment' | 'Timeline';
@@ -9,13 +9,6 @@ interface StatusCardProps {
   contact?: string;
   note: string;
   time: string;
-}
-
-function hexToRgba(hex: string, opacity: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
 // Mapping màu theo loại

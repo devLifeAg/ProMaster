@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell } from "recharts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
-import colors from '../styles/colors';
+import colors, {hexToRgba} from '../styles/colors';
 
 interface CircleChartProps {
   title: string;
@@ -12,16 +12,6 @@ interface CircleChartProps {
     color: string;
   }[];
 }
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const hexToRGBA = (hex: string, opacity: number) => {
-  const c = hex.replace("#", "");
-  const bigint = parseInt(c, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r},${g},${b},${opacity})`;
-};
 
 export const CircleChart = ({ title, total, data }: CircleChartProps) => {
   const totalValue = useMemo(() => data.reduce((sum, d) => sum + d.value, 0), [data]);
@@ -82,7 +72,7 @@ export const CircleChart = ({ title, total, data }: CircleChartProps) => {
               {data.map((entry, idx) => (
                 <Cell
                   key={idx}
-                  fill={hexToRGBA(entry.color, 0.8)} // 80% opacity cho Pie
+                  fill={hexToRgba(entry.color, 0.8)} // 80% opacity cho Pie
                 />
               ))}
             </Pie>
@@ -104,7 +94,7 @@ export const CircleChart = ({ title, total, data }: CircleChartProps) => {
                 top: item.y - 12,
                 width: 40,
                 height: 24,
-                background: hexToRGBA(item.color, 0.9),
+                background: hexToRgba(item.color, 0.9),
                 color: "#fff",
                 borderRadius: "8px",
                 fontSize: "14px",
