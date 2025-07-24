@@ -57,36 +57,39 @@ export default function ShowcaseContent() {
   };
 
   return (
-    <div className="flex flex-col gap-6 mt-6">
-      {showcaseData.map((section, sectionIndex) => (
-        <div key={sectionIndex}>
-          <div
-            className="px-6 py-2 flex items-center gap-2"
-            style={{
-              color: section.section === "My Pins" ? colors.blackDark : colors.whiteCloud,
-              fontSize: section.section === "My Pins" ? 20 : 18,
-              fontWeight: 700,
-              fontFamily: fonts.outfit,
-              background: section.section === "My Pins" ? undefined : colors.redRuby,
-            }}
-          >
-            {section.section === "My Pins" && (
-              <BsBookmark style={{ color: colors.redRuby }} size={20} />
-            )}
-            {section.section}
-          </div>
+    <div className="grid grid-cols-10 flex-1">
+      <div className="col-span-10 mt-6">
+        {showcaseData.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <div
+              className={`px-6 ${section.section !== "My Pins" ? 'py-2' : ''} flex items-center gap-2`}
+              style={{
+                color: section.section === "My Pins" ? colors.blackDark : colors.whiteCloud,
+                fontSize: section.section === "My Pins" ? 20 : 18,
+                fontWeight: 700,
+                fontFamily: fonts.outfit,
+                background: section.section === "My Pins" ? undefined : colors.redRuby,
+              }}
+            >
+              {section.section === "My Pins" && (
+                <BsBookmark style={{ color: colors.redRuby }} size={20} />
+              )}
+              {section.section}
+            </div>
 
-          <div className="flex gap-4 p-6 overflow-x-auto pb-9">
-            {section.items.map((item, itemIndex) => (
-              <ShowcaseItem
-                key={itemIndex}
-                {...item}
-                onTogglePin={() => handleTogglePin(sectionIndex, itemIndex)}
-              />
-            ))}
+            <div className="flex gap-4 p-6 overflow-x-auto pb-9">
+              {section.items.map((item, itemIndex) => (
+                <ShowcaseItem
+                  key={itemIndex}
+                  {...item}
+                  onTogglePin={() => handleTogglePin(sectionIndex, itemIndex)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
     </div>
   );
 }

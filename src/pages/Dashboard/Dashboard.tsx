@@ -7,6 +7,7 @@ import colors from '../../styles/colors';
 import { CircleChart } from "../../components/CircleChart";
 import StatusCard from '../../components/StatusCard';
 import {ImagePaths, IconPaths} from '../../constants/consts';
+import fonts from "../../styles/fonts";
 
 const chartData = [
   { label: "Available", value: 42, color: colors.availableStatus },
@@ -33,7 +34,7 @@ export default function DashboardContent() {
           <div className="flex items-center justify-between mb-4">
             <span>
               <span className="text-lg font-bold mr-3" style={{ color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Projects</span>
-              <Button className="bg-blue-500 text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer">
+              <Button style={{background: colors.brookedStatus, fontWeight: 600, fontSize: 14}} className="text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer">
                 Selling Fast
                 <ChevronDown size={14} />
               </Button>
@@ -44,10 +45,10 @@ export default function DashboardContent() {
             {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
               <div key={idx} className="relative w-1/3 rounded-xl overflow-hidden shadow cursor-pointer">
                 <img src={ImagePaths.avatar} alt={project} className="w-full h-64 object-cover" />
-                <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">Selling Fast</div>
+                <div className="absolute top-2 left-2 rounded text-white px-2 py-1" style={{background: colors.brookedStatus, fontWeight: 600, fontSize: 14}}>Selling Fast</div>
                 <div className="absolute bottom-2 left-2 text-white">
-                  <p className="font-semibold text-sm">{project}</p>
-                  <p className="text-xs">Jln Bersatu, Taman Bukit Serdang</p>
+                  <p style={{fontSize: 18, fontWeight: 900, fontFamily: fonts.inter}}>{project}</p>
+                  <p style={{fontSize: 14, fontFamily: fonts.outfit}}>Jln Bersatu, Taman Bukit Serdang</p>
                 </div>
               </div>
             ))}
@@ -64,7 +65,7 @@ export default function DashboardContent() {
               <div className="flex flex-col">
                 <span className="text-lg font-bold mb-6" style={{ color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Statistics</span>
 
-                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 400 }}>By Property</div>
+                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Property</div>
 
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2 cursor-pointer">
@@ -81,7 +82,7 @@ export default function DashboardContent() {
               <CircleChart title="Property 1" total={42} data={chartData} />
 
               <div className="flex flex-col mt-8">
-                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 400 }}>By Personnel</div>
+                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Personnel</div>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2 cursor-pointer">
                     <p style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}>Sale Status</p>
@@ -96,7 +97,7 @@ export default function DashboardContent() {
               </div>
 
               <div className="flex flex-col mt-8">
-                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 400 }}>By Period</div>
+                <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Period</div>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2 cursor-pointer">
                     <p style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}>Sales Today</p>

@@ -64,7 +64,7 @@ export default function DashboardLayout() {
               <p style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 700 }}>
                 Hi, Jayce
                 <span
-                  className="ml-2 px-2 py-0.5 rounded-full"
+                  className="ml-2 px-2 py-1 rounded-full"
                   style={{ color: colors.whiteCloud, fontSize: '16px', fontWeight: 500, background: colors.redRuby }}
                 >
                   Team A
