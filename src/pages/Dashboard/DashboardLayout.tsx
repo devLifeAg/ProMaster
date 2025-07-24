@@ -1,16 +1,16 @@
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import colors from '../../styles/colors';
 import { LogOut, Menu, Search } from "lucide-react";
-
+import {ImagePaths, IconPaths} from '../../constants/consts';
 
 const menuItems = [
-  { label: "Dashboard", icon: "/ProMaster/assets/icons/dashboard.png", key: "dashboard" },
-  { label: "Showcase", icon: "/ProMaster/assets/icons/showcase.png", key: "Showcase" },
-  { label: "Bookings", icon: "/ProMaster/assets/icons/booking.png", key: "Bookings" },
-  { label: "Contacts", icon: "/ProMaster/assets/icons/contacts.png", key: "Contacts" },
-  { label: "Appointment", icon: "/ProMaster/assets/icons/appointment.png", key: "Appointment" },
-  { label: "Approval", icon: "/ProMaster/assets/icons/approval.png", key: "Approval" },
-  { label: "Enquiry", icon: "/ProMaster/assets/icons/enquiry.png", key: "Enquiry" },
+  { label: "Dashboard", icon: IconPaths.dashboard, key: "dashboard" },
+  { label: "Showcase", icon: IconPaths.showcase, key: "Showcase" },
+  { label: "Bookings", icon: IconPaths.bookings, key: "Bookings" },
+  { label: "Contacts", icon: IconPaths.contacts, key: "Contacts" },
+  { label: "Appointment", icon: IconPaths.appointment, key: "Appointment" },
+  { label: "Approval", icon: IconPaths.approval, key: "Approval" },
+  { label: "Enquiry", icon: IconPaths.enquiry, key: "Enquiry" },
 ];
 
 export default function DashboardLayout() {
@@ -25,7 +25,7 @@ export default function DashboardLayout() {
       <aside className="w-64 bg-white text-black flex flex-col shadow justify-between border-r">
         <div>
           <div className="flex items-center justify-between mb-8 p-6">
-            <img src="/ProMaster/assets/logo.png" alt="ProMaster Logo" />
+            <img src={ImagePaths.logo} alt="ProMaster Logo" />
             <Menu color="#EF4444" size={26} />
           </div>
           <ul className="space-y-4 text-sm">
@@ -59,7 +59,7 @@ export default function DashboardLayout() {
       <div className="flex-1 flex flex-col">
         <div className="p-6 bg-white flex items-center justify-between shadow">
           <div className="flex items-center gap-4">
-            <img src="/ProMaster/assets/image.jpg" alt="Avatar" className="w-12 h-12 rounded-full object-cover" />
+            <img src={ImagePaths.avatar} alt="Avatar" className="w-12 h-12 rounded-full object-cover" />
             <div>
               <p style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 700 }}>
                 Hi, Jayce
@@ -92,8 +92,8 @@ export default function DashboardLayout() {
               />
             </div>
 
-            <img src="/ProMaster/assets/icons/Noti.png" alt="icon-noti" className="w-10 h-10 cursor-pointer" />
-            <img src="/ProMaster/assets/icons/Help.png" alt="icon-help" className="w-10 h-10 cursor-pointer" />
+            <img src={IconPaths.noti} alt="icon-noti" className="w-10 h-10 cursor-pointer" />
+            <img src={IconPaths.help} alt="icon-help" className="w-10 h-10 cursor-pointer" />
           </div>
         </div>
 

@@ -6,6 +6,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import colors from '../../styles/colors';
 import { CircleChart } from "../../components/CircleChart";
 import StatusCard from '../../components/StatusCard';
+import {ImagePaths, IconPaths} from '../../constants/consts';
 
 const chartData = [
   { label: "Available", value: 42, color: colors.availableStatus },
@@ -42,7 +43,7 @@ export default function DashboardContent() {
           <div className="flex gap-4">
             {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
               <div key={idx} className="relative w-1/3 rounded-xl overflow-hidden shadow cursor-pointer">
-                <img src='/ProMaster/assets/image.jpg' alt={project} className="w-full h-64 object-cover" />
+                <img src={ImagePaths.avatar} alt={project} className="w-full h-64 object-cover" />
                 <div className="absolute top-2 left-2 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">Selling Fast</div>
                 <div className="absolute bottom-2 left-2 text-white">
                   <p className="font-semibold text-sm">{project}</p>
@@ -140,7 +141,7 @@ export default function DashboardContent() {
           <CardContent className="flex flex-col h-full justify-between">
             <div className="flex items-center justify-between mb-4">
               <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
-              <img src="/assets/icons/filterIcon.png" alt="icon filter" />
+              <img src={IconPaths.filter} alt="icon filter" />
             </div>
             <div className="flex flex-col justify-between h-full flex-1">
               <div className="space-y-4">

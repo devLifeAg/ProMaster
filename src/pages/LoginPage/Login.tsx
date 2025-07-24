@@ -8,7 +8,7 @@ import { getDeviceInfo } from "./getDeviceInfo";
 import { showSuccessToast, showErrorToast } from '../../components/ToasService';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-// Component LanguageDialog
+import {BASE_URL} from '../../constants/consts';
 
 const LanguageDialog = ({ currentLang, onSelect }: { currentLang: string; onSelect: (lang: string) => void }) => {
   const languages = [
@@ -111,7 +111,7 @@ const Login: React.FC = () => {
     // showSuccessToast("Login success!");
     // navigate('/Dashboard');
     try {
-      const res = await axios.post("https://ww3.mhw.com.my:1606/promaster/promasterauthentication/login", payload);
+      const res = await axios.post(`${BASE_URL}promasterauthentication/login`, payload);
 
       if (res.status === 200) {
         showSuccessToast("Login success!");
