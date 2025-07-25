@@ -18,4 +18,7 @@ export const IconPaths = {
   help: `${ASSET_BASE}/icons/Help.png`,
   filter: `${ASSET_BASE}/icons/filterIcon.png`,
   buy: `${ASSET_BASE}/icons/buy.png`,
+  tag: `${ASSET_BASE}/icons/tag.png`,
+  chart: `${ASSET_BASE}/icons/chart.png`,
+
 };
