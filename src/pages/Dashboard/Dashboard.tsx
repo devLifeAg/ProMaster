@@ -9,6 +9,8 @@ import StatusCard from '../../components/StatusCard';
 import { ImagePaths, IconPaths } from '../../constants/consts';
 import fonts from "../../styles/fonts";
 import TagDialog from "../../components/DashboardDialog";
+import SelectDialog from "../../components/SelectDialog";
+import GroupDialog from "../../components/GroupDialog";
 import { useState } from 'react';
 
 const chartData = [
@@ -26,6 +28,14 @@ const floorData = [
   { time: "4AM", floor: 5 },
 ];
 
+const propertyData = [
+  { name: "MHW Green Park Residenece", items: ["Puteri", "IBN Highlands City", "IBN Bukit Bintang", "Phase 8", "PHASE 03A", "PHASE 01A", "PHASE 02A"] },
+  { name: "Double Storey Terrance", items: ["1A1"] },
+  { name: "PH01-05 (Plot 1) PTD 180920 Seed", items: ["TSP1 Seed", "TSP2"] },
+  { name: "Loftus Park", items: ["Phase LP1A", "Phase LP1B"] }
+];
+
+
 export default function DashboardContent() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState("selling_fast");
@@ -40,6 +50,17 @@ export default function DashboardContent() {
 
   const [isDialogChart3Open, setDialogChart3Open] = useState(false);
   const [selectedChart3, setSelectedChart3] = useState("today");
+
+  const [isPropertyDialogOpen, setPropertyDialogOpen] = useState(false);
+  const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
+
+  const [isGroupDialogOpen, setGroupDialogOpen] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState<{ team: string[]; personnel: string[] }>({
+    team: [],
+    personnel: [],
+  });
+
+
   return (
     <>
       <div className="p-6 relative">
@@ -121,6 +142,23 @@ export default function DashboardContent() {
 
         )}
 
+        {isPropertyDialogOpen && (
+          <SelectDialog
+            data={propertyData}
+            onClose={() => setPropertyDialogOpen(false)}
+            onChange={(selected) => setSelectedProperties(selected)}
+            selected={selectedProperties}
+          />
+        )}
+
+        {isGroupDialogOpen && (
+          <GroupDialog
+            onClose={() => setGroupDialogOpen(false)}
+            selectedGroups={selectedGroups}  // ✅ Now supported
+            onChange={(updated) => setSelectedGroups(updated)}  // ✅ Now works
+          />
+        )}
+
 
         {/* Projects */}
         <Card className="mb-6">
@@ -167,7 +205,7 @@ export default function DashboardContent() {
                       <p onClick={() => setDialogChart1Open(!isDialogChart1Open)} style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}>Unit Status</p>
                       <ChevronDown size={22} color={colors.redRuby} />
                     </div>
-                    <Button variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    <Button onClick={() => setPropertyDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Property
                       <ChevronDown size={14} />
                     </Button>
@@ -183,7 +221,7 @@ export default function DashboardContent() {
                       <p onClick={() => setDialogChart2Open(!isDialogChart2Open)} style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}>Sales Status</p>
                       <ChevronDown size={22} color={colors.redRuby} />
                     </div>
-                    <Button variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
                     </Button>
@@ -198,7 +236,7 @@ export default function DashboardContent() {
                       <p onClick={() => setDialogChart3Open(!isDialogChart3Open)} style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}>Sales Today</p>
                       <ChevronDown size={22} color={colors.redRuby} />
                     </div>
-                    <Button variant="custom" className="rounded-full flex items-center gap-4" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
                     </Button>

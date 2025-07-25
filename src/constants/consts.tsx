@@ -20,5 +20,6 @@ export const IconPaths = {
   buy: `${ASSET_BASE}/icons/buy.png`,
   tag: `${ASSET_BASE}/icons/tag.png`,
   chart: `${ASSET_BASE}/icons/chart.png`,
+  property: `${ASSET_BASE}/icons/property.png`,
 
 };
