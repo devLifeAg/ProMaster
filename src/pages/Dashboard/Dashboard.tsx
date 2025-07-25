@@ -146,7 +146,7 @@ export default function DashboardContent() {
           <SelectDialog
             data={propertyData}
             onClose={() => setPropertyDialogOpen(false)}
-            // onChange={(selected: any) => setSelectedProperties(selected)}
+            onChange={(selected: string[]) => setSelectedProperties(selected)}
             selected={selectedProperties}
           />
         )}
