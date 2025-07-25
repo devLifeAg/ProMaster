@@ -67,7 +67,7 @@ export default function DashboardDialog({ onClose, selected, onSelect, dialogTyp
                 {/* Nội dung */}
                 <div className="space-y-4 p-6">
                     {(
-                        data.map((tag) => {
+                        data.map((tag: any) => {
                             const isSelected = selected === tag.value;
                             return (
                                 <div key={tag.value} className="flex items-center justify-between">
