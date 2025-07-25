@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 type TabType = "team" | "personnel";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dataMap: Record<TabType, any> = {
     team: ["Team A", "Team B", "Team C", "Team D", "Team E", "Team F"],
     personnel: ["Personnel A", "Personnel B", "Personnel C", "Personnel D", "Personnel E", "Personnel F"],

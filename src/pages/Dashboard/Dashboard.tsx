@@ -196,7 +196,7 @@ export default function DashboardContent() {
             <Card>
               <CardContent>
                 <div className="flex flex-col">
-                  <span className="text-lg font-bold mb-6" style={{ color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Statistics</span>
+                  <span className="text-lg font-bold mb-6" style={{fontFamily: fonts.outfit, color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Statistics</span>
 
                   <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Property</div>
 

@@ -7,6 +7,7 @@ interface TagDialogProps {
     onClose: () => void;
     selected: string;
     dialogType: number;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     onSelect: (value: string) => void;
 }
@@ -67,6 +68,7 @@ export default function DashboardDialog({ onClose, selected, onSelect, dialogTyp
                 {/* Nội dung */}
                 <div className="space-y-4 p-6">
                     {(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
                         data.map((tag: any) => {
                             const isSelected = selected === tag.value;
                             return (
