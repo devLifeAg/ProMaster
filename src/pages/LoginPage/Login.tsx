@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaGlobe, FaCog } from 'react-icons/fa';
+import { FaCog } from 'react-icons/fa';
 import colors from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import warningImg from '../../assets/warning.png';
