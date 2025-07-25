@@ -1,26 +1,27 @@
 import React from 'react';
 import fonts from '../styles/fonts';
 import colors from '../styles/colors';
+
 interface Option {
     label: string;
     value: string;
 }
 
 interface CustomInputProps {
-    name?: string,
-    inputType?: string,
+    name?: string;
+    inputType?: string;
     label: string;
     required?: boolean;
     type?: 0 | 1 | 2;
     value?: string;
     onChange?: (value: string) => void;
-    options?: Option[]; // Cho kiểu 1 (select)
-    phoneCode?: string; // Cho kiểu 2 (phone input)
-    onPhoneCodeChange?: (code: string) => void; // Cho kiểu 2 (phone input)
+    options?: Option[];
+    phoneCode?: string;
+    onPhoneCodeChange?: (code: string) => void;
     disabled?: boolean;
     placeholder?: string;
-     fontSize?: number;
-    backgroundColor?: string; // Màu nền input
+    fontSize?: number;
+    backgroundColor?: string;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -36,13 +37,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
     onPhoneCodeChange,
     disabled = false,
     placeholder = '',
-    backgroundColor = '#FFFFFF', // mặc định white
+    backgroundColor = '#FFFFFF',
     fontSize
 }) => {
 
     const inputStyle: React.CSSProperties = {
-        color: placeholder != '' ? colors.greyCalm : colors.blackDark,
-        width: type === 2 ? '370px' : '450px',
+        color: placeholder !== '' ? colors.greyCalm : colors.blackDark,
+        width: '100%',
         height: '50px',
         borderRadius: '10px',
         border: `1px solid ${colors.greyCalm}`,
@@ -67,28 +68,24 @@ const CustomInput: React.FC<CustomInputProps> = ({
             </label>
 
             {type === 1 ? (
-                <div style={{ position: 'relative', width: '450px' }}>
+                <div className="relative w-full" style={{ maxWidth: 450 }}>
                     <select
                         value={value}
                         onChange={(e) => onChange?.(e.target.value)}
-
                         disabled={disabled}
                         style={{
-                            color: value === '' ? colors.greyCalm : colors.blackDark,
                             ...inputStyle,
-
+                            color: value === '' ? colors.greyCalm : colors.blackDark,
+                            appearance: 'none',
                         }}
-                        className="custom-select"
+                        className="w-full"
                     >
                         <option value=''>{placeholder}</option>
-                        {options.map((opt) => (
-                            <option value={opt.value}>
-                                {opt.label}
-                            </option>
+                        {options.map((opt, index) => (
+                            <option key={index} value={opt.value}>{opt.label}</option>
                         ))}
                     </select>
 
-                    {/* Icon giả lập */}
                     <svg
                         style={{
                             position: 'absolute',
@@ -109,16 +106,15 @@ const CustomInput: React.FC<CustomInputProps> = ({
                         <polyline points="6 9 12 15 18 9" />
                     </svg>
                 </div>
-
             ) : type === 2 ? (
-                <div className="flex gap-2">
-                    <div style={{ position: 'relative' }}>
+                <div className="flex flex-wrap gap-2 w-full" style={{ maxWidth: 450 }}>
+                    <div className="relative" style={{ flex: '0 0 100px' }}>
                         <select
                             value={phoneCode}
                             onChange={(e) => onPhoneCodeChange?.(e.target.value)}
                             disabled={disabled}
                             style={{
-                                width: '100px',
+                                width: '100%',
                                 height: '50px',
                                 borderRadius: '10px',
                                 border: `1px solid ${colors.greyCalm}`,
@@ -128,12 +124,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
                                 backgroundColor,
                                 opacity: disabled ? 0.5 : 1,
                                 appearance: 'none',
-                                WebkitAppearance: 'none',
-                                MozAppearance: 'none',
                                 color: phoneCode === '' ? colors.greyCalm : colors.blackDark,
                             }}
                         >
-                            <option value="">{'Country Code'}</option>
+                            <option value="">Country Code</option>
                             <option value="+60">+60</option>
                             <option value="+84">+84</option>
                             <option value="+65">+65</option>
@@ -160,27 +154,27 @@ const CustomInput: React.FC<CustomInputProps> = ({
                         </svg>
                     </div>
 
-                    <input
-                        type='tel'
-                        value={value}
-                        onChange={(e) => onChange?.(e.target.value)}
-                        disabled={disabled}
-                        placeholder={placeholder || '0123456789'}
-                        style={{
-                            ...inputStyle,
-                            width: '340px',
-                        }}
-                    />
+                    <div style={{ flex: '1 1 auto' }}>
+                        <input
+                            type="tel"
+                            value={value}
+                            onChange={(e) => onChange?.(e.target.value)}
+                            disabled={disabled}
+                            placeholder={placeholder || '0123456789'}
+                            style={inputStyle}
+                        />
+                    </div>
                 </div>
             ) : (
                 <input
-                name={name}
+                    name={name}
                     type={inputType}
                     value={value}
                     onChange={(e) => onChange?.(e.target.value)}
                     disabled={disabled}
                     placeholder={placeholder}
-                    style={inputStyle}
+                    style={{ ...inputStyle, maxWidth: 450 }}
+                    className="w-full"
                 />
             )}
         </div>

@@ -148,10 +148,10 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
     }
 
     return (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
             <div
                 ref={dialogRef}
-                className="bg-white rounded-md w-[630px] h-[573px] shadow flex flex-col"
+                className="bg-white rounded-md w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-[573px] shadow flex flex-col"
             >
                 {/* Header */}
                 <div className="flex justify-between items-center px-6 py-4">

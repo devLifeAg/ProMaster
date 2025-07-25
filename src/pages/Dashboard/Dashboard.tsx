@@ -63,7 +63,7 @@ export default function DashboardContent() {
 
   return (
     <>
-      <div className="p-6 relative">
+      <div className="p-4 relative">
         {isDialogOpen && (
           <TagDialog
             dialogType={0}
@@ -165,38 +165,91 @@ export default function DashboardContent() {
           <CardContent>
             <div className="flex items-center justify-between mb-4">
               <span>
-                <span className="text-lg font-bold mr-3" style={{ color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Projects</span>
-                <Button onClick={() => setDialogOpen(!isDialogOpen)}
-                  style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }} className="text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer">
+                <span
+                  className="text-lg font-bold mr-3"
+                  style={{ color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}
+                >
+                  Projects
+                </span>
+                <Button
+                  onClick={() => setDialogOpen(!isDialogOpen)}
+                  style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }}
+                  className="text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer"
+                >
                   Selling Fast
                   <ChevronDown size={14} />
                 </Button>
               </span>
-              <div className="cursor-pointer" style={{ fontSize: '16px', color: colors.redRuby }}>See All</div>
+              <div className="cursor-pointer" style={{ fontSize: '16px', color: colors.redRuby }}>
+                See All
+              </div>
             </div>
-            <div className="flex gap-4">
-              {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
-                <div key={idx} className="relative w-1/3 rounded-xl overflow-hidden shadow cursor-pointer">
-                  <img src={ImagePaths.avatar} alt={project} className="w-full h-64 object-cover" />
-                  <div className="absolute top-2 left-2 rounded text-white px-2 py-1" style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }}>Selling Fast</div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <p style={{ fontSize: 18, fontWeight: 900, fontFamily: fonts.inter }}>{project}</p>
-                    <p style={{ fontSize: 14, fontFamily: fonts.outfit }}>Jln Bersatu, Taman Bukit Serdang</p>
+
+            {/* Horizontal Scrollable List */}
+            <div className="grid lg:grid-cols-10 gap-6 w-full">
+              <div className="col-span-10 flex gap-4 overflow-x-auto">
+                {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
+                  <div
+                    key={idx}
+                    className="relative min-w-[240px] max-w-[320px] rounded-xl overflow-hidden shadow cursor-pointer"
+                  >
+                    <img
+                      src={ImagePaths.avatar}
+                      alt={project}
+                      className="h-64 object-cover "
+                    />
+                    <div
+                      className="absolute top-2 left-2 rounded text-white px-2 py-1"
+                      style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }}
+                    >
+                      Selling Fast
+                    </div>
+                    <div className="absolute bottom-2 left-2 text-white">
+                      <p style={{ fontSize: 18, fontWeight: 900, fontFamily: fonts.inter }}>{project}</p>
+                      <p style={{ fontSize: 14, fontFamily: fonts.outfit }}>Jln Bersatu, Taman Bukit Serdang</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
             </div>
           </CardContent>
         </Card>
 
+
+
+
         {/* Statistics + Activities */}
-        <div className="grid grid-cols-10 gap-6 flex-1">
+        <div className="grid lg:grid-cols-10 grid-cols-1 gap-6 flex-1">
+
+          {/* Activities */}
+          <Card className="lg:col-span-4 order-1 lg:order-2">
+            <CardContent className="flex flex-col h-full justify-between">
+              <div className="flex items-center justify-between mb-4">
+                <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
+                <img className="cursor-pointer" src={IconPaths.filter} onClick={() => setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
+              </div>
+              <div className="flex flex-col justify-between h-full flex-1">
+                <div className="space-y-4">
+                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
+                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
+                  <StatusCard type="Appointment" contact="Alex Tan" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
+                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
+                  <StatusCard type="Timeline" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
+                </div>
+                <div className="flex justify-end mt-4">
+                  <span style={{ fontSize: 14, color: colors.redRuby, textDecoration: 'underline', cursor: 'pointer' }}>View More</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Statistics */}
-          <div className="col-span-6">
+          <div className="lg:col-span-6 order-2 lg:order-1">
             <Card>
               <CardContent>
                 <div className="flex flex-col">
-                  <span className="text-lg font-bold mb-6" style={{fontFamily: fonts.outfit, color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Statistics</span>
+                  <span className="text-lg font-bold mb-6" style={{ fontFamily: fonts.outfit, color: colors.blackDark, fontSize: '20px', fontWeight: 700 }}>Statistics</span>
 
                   <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Property</div>
 
@@ -243,54 +296,55 @@ export default function DashboardContent() {
                   </div>
                   <div className="w-full rounded-xl border p-6 shadow-sm">
                     <p style={{ color: colors.blackDark, fontSize: 18, fontWeight: 500 }}>Phase 1</p>
+
                     <div className="flex items-center justify-between">
-                      <ChevronLeft className="text-gray-300 cursor-pointer hover:text-gray-500 transition" />
+                      {/* Left Chevron */}
+                      <ChevronLeft className="text-gray-300 cursor-pointer hover:text-gray-500 transition w-6 h-6 flex-shrink-0" />
+
+                      {/* Chart Section */}
                       <div className="flex-1 flex justify-center">
-                        <div className="p-4 rounded-xlw-[460px]">
+                        <div className="w-full max-w-[500px] p-4">
+                          {/* Header */}
                           <div className="flex items-center justify-between mb-4">
                             <p style={{ fontSize: 14, color: colors.greyShadow }}>Floor</p>
                             <p style={{ fontSize: 14, color: colors.greyShadow }}>14/03/2025</p>
                           </div>
-                          <ResponsiveContainer width={460} height={250}>
-                            <BarChart data={floorData} margin={{ top: 0, right: 10, left: 10, bottom: 0 }} barCategoryGap={20}>
-                              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                              <YAxis domain={[1, 5]} tickCount={5} style={{ fontSize: 12, fill: colors.blackDark }} />
-                              <XAxis dataKey="time" tick={{ fontSize: 12, fill: colors.blackDark }} axisLine={false} tickLine={false} />
-                              <Tooltip />
-                              <Bar dataKey="floor" fill={colors.redRuby} radius={[6, 6, 0, 0]} />
-                            </BarChart>
-                          </ResponsiveContainer>
+
+                          {/* Responsive Chart */}
+                          <div className="w-full h-[250px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <BarChart
+                                data={floorData}
+                                margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
+                                barCategoryGap={20}
+                              >
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <YAxis domain={[1, 5]} tickCount={5} style={{ fontSize: 12, fill: colors.blackDark }} />
+                                <XAxis
+                                  dataKey="time"
+                                  tick={{ fontSize: 12, fill: colors.blackDark }}
+                                  axisLine={false}
+                                  tickLine={false}
+                                />
+                                <Tooltip />
+                                <Bar dataKey="floor" fill={colors.redRuby} radius={[6, 6, 0, 0]} />
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
                         </div>
                       </div>
-                      <ChevronRight className="text-gray-300 cursor-pointer hover:text-gray-500 transition" />
+
+                      {/* Right Chevron */}
+                      <ChevronRight className="text-gray-300 cursor-pointer hover:text-gray-500 transition w-6 h-6 flex-shrink-0" />
                     </div>
                   </div>
+
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Activities */}
-          <Card className="col-span-4">
-            <CardContent className="flex flex-col h-full justify-between">
-              <div className="flex items-center justify-between mb-4">
-                <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
-                <img className="cursor-pointer" src={IconPaths.filter} onClick={() => setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
-              </div>
-              <div className="flex flex-col justify-between h-full flex-1">
-                <div className="space-y-4">
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Appointment" contact="Alex Tan" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Timeline" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                </div>
-                <div className="flex justify-end mt-4">
-                  <span style={{ fontSize: 14, color: colors.redRuby, textDecoration: 'underline', cursor: 'pointer' }}>View More</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
       </div>
 

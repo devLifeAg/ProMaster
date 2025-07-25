@@ -57,12 +57,13 @@ export default function ShowcaseContent() {
   };
 
   return (
-    <div className="grid grid-cols-10 flex-1">
-      <div className="col-span-10 mt-6">
+    <div className="grid grid-cols-10 w-full">
+      <div className="col-span-10 mt-4 w-full">
         {showcaseData.map((section, sectionIndex) => (
-          <div key={sectionIndex}>
+          <div key={sectionIndex} className="w-full">
+            {/* Section Header */}
             <div
-              className={`px-6 ${section.section !== "My Pins" ? 'py-2' : ''} flex items-center gap-2`}
+              className={`px-4 ${section.section !== "My Pins" ? 'py-2 mt-9' : ''} flex items-center gap-2`}
               style={{
                 color: section.section === "My Pins" ? colors.blackDark : colors.whiteCloud,
                 fontSize: section.section === "My Pins" ? 20 : 18,
@@ -77,19 +78,22 @@ export default function ShowcaseContent() {
               {section.section}
             </div>
 
-            <div className="flex gap-4 p-6 overflow-x-auto pb-9">
-              {section.items.map((item, itemIndex) => (
-                <ShowcaseItem
-                  key={itemIndex}
-                  {...item}
-                  onTogglePin={() => handleTogglePin(sectionIndex, itemIndex)}
-                />
-              ))}
+            {/* Scroll container */}
+            <div className="w-full overflow-x-auto">
+              <div className="flex gap-4 p-4 w-max">
+                {section.items.map((item, itemIndex) => (
+                  <ShowcaseItem
+                    key={itemIndex}
+                    {...item}
+                    onTogglePin={() => handleTogglePin(sectionIndex, itemIndex)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ))}
       </div>
-
     </div>
+
   );
 }

@@ -61,16 +61,16 @@ input::placeholder {
   }
 
   /* Dành cho Webkit (Chrome, Safari) */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   display: none;
-}
+} */
 
 /* Dành cho toàn bộ phần tử cụ thể */
-.scroll-hidden {
+/* .scroll-hidden {
   overflow-y: auto;
-  -ms-overflow-style: none; /* IE và Edge */
-  scrollbar-width: none; /* Firefox */
-}
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+} */
 
 
   @keyframes slideIn {

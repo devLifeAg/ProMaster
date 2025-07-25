@@ -94,10 +94,10 @@ export default function PropertyDialog({ onClose, data, title, selected = [], ..
     const isDefault = selectedState.length === 0;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
             <div
                 ref={dialogRef}
-                className="bg-white rounded-md w-[630px] max-h-[630px] flex flex-col"
+                className="bg-white rounded-md w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[630px] flex flex-col"
             >
                 {/* Header */}
                 <div className="flex justify-between items-center px-6 py-4 shadow">

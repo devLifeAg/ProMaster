@@ -1,7 +1,8 @@
+import { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import colors from '../../styles/colors';
-import { LogOut, Menu, Search } from "lucide-react";
-import {ImagePaths, IconPaths} from '../../constants/consts';
+import { LogOut, Menu, Search, X } from "lucide-react";
+import { ImagePaths, IconPaths } from '../../constants/consts';
 
 const menuItems = [
   { label: "Dashboard", icon: IconPaths.dashboard, key: "dashboard" },
@@ -16,27 +17,37 @@ const menuItems = [
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const activeKey = location.pathname.split('/')[2] || 'dashboard';
 
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
-    <div className="flex h-screen overflow-hidden text-black">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white text-black flex flex-col shadow justify-between border-r">
+    <div className="flex h-screen overflow-hidden text-black relative">
+      {/* ===== Sidebar ===== */}
+      <aside className={`
+        fixed lg:static top-0 left-0 h-full w-64 bg-white z-50
+        flex flex-col justify-between border-r shadow transition-transform duration-300
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+        lg:translate-x-0
+      `}>
         <div>
-          <div className="flex items-center justify-between mb-8 p-6">
+          <div className="flex items-center justify-between p-6 border-b">
             <img src={ImagePaths.logo} alt="ProMaster Logo" />
-            <Menu color="#EF4444" size={26} />
+            <X className="lg:hidden cursor-pointer" color={colors.redRuby} onClick={() => setSidebarOpen(false)} />
           </div>
-          <ul className="space-y-4 text-sm">
+          <ul className="space-y-4 text-sm mt-4">
             {menuItems.map((item, idx) => {
               const isActive = activeKey === item.key;
               return (
                 <li
                   key={idx}
                   onClick={() => navigate(`/dashboard/${item.key === 'dashboard' ? '' : item.key}`)}
-                  className={`flex items-center gap-3 cursor-pointer px-6 py-4 transition-all ${isActive ? 'bg-red-50 border-r-4 border-red-500' : ''
-                    }`}
+                  className={`flex items-center gap-3 cursor-pointer px-6 py-4 transition-all
+                    ${isActive ? 'bg-red-50 border-r-4 border-red-500' : ''}
+                  `}
                   style={{ color: isActive ? colors.redRuby : colors.blackDark }}
                 >
                   <img src={item.icon} alt={item.label} className="w-6 h-6" />
@@ -55,45 +66,60 @@ export default function DashboardLayout() {
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* ===== Overlay when sidebar open (mobile only) ===== */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* ===== Main Content ===== */}
       <div className="flex-1 flex flex-col">
-        <div className="p-6 bg-white flex items-center justify-between shadow">
-          <div className="flex items-center gap-4">
-            <img src={ImagePaths.avatar} alt="Avatar" className="w-12 h-12 rounded-full object-cover" />
+        {/* Header */}
+        <div className="p-4 bg-white flex flex-col md:flex-row items-start lg:items-center justify-between gap-4 lg:gap-0 shadow">
+          {/* Left: Avatar & greeting */}
+          <div className="flex items-center gap-4 w-full lg:w-auto">
+            {/* Menu Button - Only on Mobile */}
+            <Menu
+              className="block lg:hidden cursor-pointer"
+              color={colors.redRuby}
+              size={26}
+              onClick={() => setSidebarOpen(true)}
+            />
+            <img src={ImagePaths.avatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover" />
             <div>
-              <p style={{ color: colors.blackDark, fontSize: '16px', fontWeight: 700 }}>
+              <p className="text-base font-bold text-black">
                 Hi, Jayce
                 <span
-                  className="ml-2 px-2 py-1 rounded-full"
-                  style={{ color: colors.whiteCloud, fontSize: '16px', fontWeight: 500, background: colors.redRuby }}
+                  className="ml-2 px-2 py-1 rounded-full text-sm font-medium"
+                  style={{ background: colors.redRuby, color: colors.whiteCloud }}
                 >
                   Team A
                 </span>
               </p>
-              <p
-                style={{
-                  color: colors.greyInputText,
-                  fontSize: '16px',
-                  fontWeight: 400,
-                  marginTop: '8px',
-                }}
-              >
+              <p className="text-sm mt-1" style={{ color: colors.greyInputText }}>
                 Wednesday, 09:41 AM
               </p>
             </div>
           </div>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow border" style={{borderColor: colors.greyCalm}}>
+
+          {/* Right: Search + Icons (responsive) */}
+          <div className="flex sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full lg:w-auto">
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow border w-full"
+              style={{ borderColor: colors.greyCalm }}>
               <Search size={20} color={colors.greyShadow} />
               <input
                 type="text"
                 placeholder="Search..."
-                className="outline-none text-sm text-black placeholder:text-gray-400"
+                className="outline-none text-sm text-black placeholder:text-gray-400 w-full sm:w-40"
               />
             </div>
 
-            <img src={IconPaths.noti} alt="icon-noti" className="w-10 h-10 cursor-pointer" />
-            <img src={IconPaths.help} alt="icon-help" className="w-10 h-10 cursor-pointer" />
+            <div className="flex gap-2">
+              <img src={IconPaths.noti} alt="icon-noti" className="w-8 h-8 cursor-pointer" />
+              <img src={IconPaths.help} alt="icon-help" className="w-8 h-8 cursor-pointer" />
+            </div>
           </div>
         </div>
 
