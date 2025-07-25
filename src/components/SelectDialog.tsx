@@ -12,7 +12,7 @@ interface ListGroup {
 interface PropertyDialogProps {
     onClose: () => void;
     data: ListGroup[] | string[];
-    onChange: (selected: string[]) => void;
+    onChange?: (selected: string[]) => void;
     onConfirm?: (selected: string[]) => void; // Thay đổi ở đây
     title?: string; // Thêm prop title
     selected?: string[]; // Thêm prop này
