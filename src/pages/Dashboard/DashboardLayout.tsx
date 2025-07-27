@@ -3,6 +3,7 @@ import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import colors from '../../styles/colors';
 import { LogOut, Menu, Search, X } from "lucide-react";
 import { ImagePaths, IconPaths } from '../../constants/consts';
+import type { UserProfile } from '../../models/Dashboard';
 
 const menuItems = [
   { label: "Dashboard", icon: IconPaths.dashboard, key: "dashboard" },
@@ -14,19 +15,41 @@ const menuItems = [
   { label: "Enquiry", icon: IconPaths.enquiry, key: "Enquiry" },
 ];
 
+function getFormattedDateTime() {
+  const now = new Date();
+  return now.toLocaleString('en-US', {
+    weekday: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
+  const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
   const activeKey = location.pathname.split('/')[2] || 'dashboard';
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  // Optional: Update time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(getFormattedDateTime());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const profile = userInfo;
+
   return (
     <div className="flex h-screen overflow-hidden text-black relative">
-      {/* ===== Sidebar ===== */}
+      {/* Sidebar */}
       <aside className={`
         fixed lg:static top-0 left-0 h-full w-64 bg-white z-50
         flex flex-col justify-between border-r shadow transition-transform duration-300
@@ -66,7 +89,6 @@ export default function DashboardLayout() {
         </div>
       </aside>
 
-      {/* ===== Overlay when sidebar open (mobile only) ===== */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/60 z-40 lg:hidden"
@@ -74,13 +96,11 @@ export default function DashboardLayout() {
         />
       )}
 
-      {/* ===== Main Content ===== */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <div className="p-4 bg-white flex flex-col md:flex-row items-start lg:items-center justify-between gap-4 lg:gap-0 shadow">
-          {/* Left: Avatar & greeting */}
           <div className="flex items-center gap-4 w-full lg:w-auto">
-            {/* Menu Button - Only on Mobile */}
             <Menu
               className="block lg:hidden cursor-pointer"
               color={colors.redRuby}
@@ -89,22 +109,30 @@ export default function DashboardLayout() {
             />
             <img src={ImagePaths.avatar} alt="Avatar" className="w-10 h-10 rounded-full object-cover" />
             <div>
-              <p className="text-base font-bold text-black">
-                Hi, Jayce
-                <span
-                  className="ml-2 px-2 py-1 rounded-full text-sm font-medium"
-                  style={{ background: colors.redRuby, color: colors.whiteCloud }}
-                >
-                  Team A
-                </span>
-              </p>
-              <p className="text-sm mt-1" style={{ color: colors.greyInputText }}>
-                Wednesday, 09:41 AM
-              </p>
+              {profile ? (
+                <>
+                  <p className="text-base font-bold text-black">
+                    Hi, {profile.profileName}
+                    <span
+                      className="ml-2 px-2 py-1 rounded-full text-sm font-medium"
+                      style={{ background: colors.redRuby, color: colors.whiteCloud }}
+                    >
+                      {profile.teamName}
+                    </span>
+                  </p>
+                  <p className="text-sm mt-1" style={{ color: colors.greyInputText }}>
+                    {currentTime}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="w-32 h-4 bg-gray-300 rounded animate-pulse mb-2" />
+                  <div className="w-20 h-4 bg-gray-200 rounded animate-pulse" />
+                </>
+              )}
             </div>
           </div>
 
-          {/* Right: Search + Icons (responsive) */}
           <div className="flex sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full lg:w-auto">
             <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow border w-full"
               style={{ borderColor: colors.greyCalm }}>
@@ -125,7 +153,7 @@ export default function DashboardLayout() {
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto bg-gray-100">
-          <Outlet />
+          <Outlet context={{ setUserInfo }} />
         </div>
       </div>
     </div>

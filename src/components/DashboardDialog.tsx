@@ -2,15 +2,22 @@
 import { useEffect, useRef } from "react";
 import colors from "../styles/colors";
 import { IconPaths } from '../constants/consts';
+// import type { ProjectTag } from '../models/Dashboard';
 
 interface TagDialogProps {
   onClose: () => void;
-  selected: string;
+  selected: number;
   dialogType: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
-  onSelect: (value: string) => void;
+  onSelect: (value: number) => void;
 }
+
+const tagColors: Record<number, string> = {
+  67845: colors.brookedStatus,
+  67861: colors.waitingStatus,
+  67846: colors.reserveStatus,
+};
+
 
 export default function DashboardDialog({
   onClose,
@@ -59,7 +66,7 @@ export default function DashboardDialog({
             <button
               style={{ color: colors.redRuby, fontSize: 18, fontWeight: 500 }}
               className="cursor-pointer"
-              onClick={() => onSelect("")}
+              onClick={() => onSelect(-1)}
             >
               Reset
             </button>
@@ -71,24 +78,24 @@ export default function DashboardDialog({
         {/* Nội dung */}
         <div className="space-y-4 p-6 max-h-[60vh] overflow-y-auto">
           {data.map((tag: any) => {
-            const isSelected = selected === tag.value;
+            const isSelected = selected === tag.intId;
             return (
-              <div key={tag.value} className="flex items-center justify-between">
+              <div key={tag.intId} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {tag.color && (
+                  {dialogType == 0 && (
                     <span
                       className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: tag.color }}
+                      style={{ backgroundColor: tagColors[tag.intId] }}
                     />
                   )}
-                  <span className="text-sm">{tag.label}</span>
+                  <span className="text-sm">{tag.description}</span>
                 </div>
                 <label className="relative cursor-pointer">
                   <input
                     type="radio"
                     name="tag"
                     checked={isSelected}
-                    onChange={() => onSelect(tag.value)}
+                    onChange={() => onSelect(tag.intId)}
                     className="sr-only"
                   />
                   <div

@@ -11,7 +11,17 @@ import fonts from "../../styles/fonts";
 import TagDialog from "../../components/DashboardDialog";
 import SelectDialog from "../../components/SelectDialog";
 import GroupDialog from "../../components/GroupDialog";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { BASE_URL } from '../../constants/consts';
+import { showErrorToast } from '../../components/ToasService';
+import type { DashboardData, UserProfile } from '../../models/Dashboard';
+import { useOutletContext } from "react-router-dom";
+import SkeletonBox from '../../components/SkeletonBox';
+
+type ContextType = {
+  setUserInfo: (info: UserProfile) => void;
+};
 
 const chartData = [
   { label: "Available", value: 42, color: colors.availableStatus },
@@ -35,21 +45,27 @@ const propertyData = [
   { name: "Loftus Park", items: ["Phase LP1A", "Phase LP1B"] }
 ];
 
+const tagColors: Record<number, string> = {
+  67845: colors.brookedStatus,
+  67861: colors.waitingStatus,
+  67846: colors.reserveStatus,
+};
+
 
 export default function DashboardContent() {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState("selling_fast");
+  const [selectedTag, setSelectedTag] = useState(-1);
   const [isDialogFilterOpen, setDialogFilterOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("appointments");
+  const [selectedFilter, setSelectedFilter] = useState(-1);
 
   const [isDialogChart1Open, setDialogChart1Open] = useState(false);
-  const [selectedChart1, setSelectedChart1] = useState("unitStatus");
+  const [selectedChart1, setSelectedChart1] = useState(0);
 
   const [isDialogChart2Open, setDialogChart2Open] = useState(false);
-  const [selectedChart2, setSelectedChart2] = useState("salesStatus");
+  const [selectedChart2, setSelectedChart2] = useState(0);
 
   const [isDialogChart3Open, setDialogChart3Open] = useState(false);
-  const [selectedChart3, setSelectedChart3] = useState("today");
+  const [selectedChart3, setSelectedChart3] = useState(0);
 
   const [isPropertyDialogOpen, setPropertyDialogOpen] = useState(false);
   const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
@@ -59,6 +75,38 @@ export default function DashboardContent() {
     team: [],
     personnel: [],
   });
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const { setUserInfo } = useOutletContext<ContextType>();
+
+
+
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      const accessToken = localStorage.getItem('accessToken');
+
+      try {
+        const response = await axios.get(
+          `${BASE_URL}promasterauthentication/dashboard`,
+          {
+            headers: {
+              AccessToken: accessToken,
+            }
+          }
+        );
+        const result = response.data.result as DashboardData;
+        console.log('Full response:', response.data);
+
+        setDashboardData(result);
+        setUserInfo(result.userprofile);
+      } catch (error) {
+        showErrorToast('Error fetching dashboard data: ' + error);
+        console.log('Error fetching dashboard data: ' + error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
 
   return (
@@ -70,11 +118,7 @@ export default function DashboardContent() {
             selected={selectedTag}
             onSelect={(val) => setSelectedTag(val)}
             onClose={() => setDialogOpen(false)}
-            data={[
-              { color: colors.brookedStatus, label: "Selling Fast", value: "selling_fast" },
-              { color: colors.waitingStatus, label: "Mix Developments", value: "mix_developments" },
-              { color: colors.reserveStatus, label: "Last Few Unit", value: "last_few_unit" },
-            ]} // không cần
+            data={dashboardData?.projecttags}
           />
 
         )}
@@ -84,11 +128,7 @@ export default function DashboardContent() {
             selected={selectedFilter}
             onSelect={(val) => setSelectedFilter(val)}
             onClose={() => setDialogFilterOpen(false)}
-            data={[
-              { value: "appointments", label: "Appointments" },
-              { value: "booking", label: "Booking" },
-              { value: "timeline", label: "Timeline" },
-            ]}
+            data={dashboardData?.activityfilters}
           />
 
         )}
@@ -100,10 +140,10 @@ export default function DashboardContent() {
             onSelect={(val) => setSelectedChart1(val)}
             onClose={() => setDialogChart1Open(false)}
             data={[
-              { value: "unitStatus", label: "Unit Status" },
-              { value: "salesStatus", label: "Sale Status" },
-              { value: "raceStatistic", label: "Race Statistic" },
-              { value: "sourceStatistic", label: "Source Statistic" },
+              { intId: 0, description: "Unit Status" },
+              { intId: 1, description: "Sale Status" },
+              { intId: 2, description: "Race Statistic" },
+              { intId: 3, description: "Source Statistic" },
 
             ]}
           />
@@ -117,10 +157,10 @@ export default function DashboardContent() {
             onSelect={(val) => setSelectedChart2(val)}
             onClose={() => setDialogChart2Open(false)}
             data={[
-              { value: "salesStatus", label: "Sales Status" },
-              { value: "contactStatus", label: "Contact Status" },
-              { value: "contactActivity", label: "Contact Activity" },
-              { value: "contactAging", label: "Contact Aging" },
+              { intId: 0, description: "Sales Status" },
+              { intId: 1, description: "Contact Status" },
+              { intId: 2, description: "Contact Activity" },
+              { intId: 3, description: "Contact Aging" },
 
             ]}
           />
@@ -134,9 +174,9 @@ export default function DashboardContent() {
             onSelect={(val) => setSelectedChart3(val)}
             onClose={() => setDialogChart3Open(false)}
             data={[
-              { value: "today", label: "Today" },
-              { value: "thisWeek", label: "This Week" },
-              { value: "thisMonth", label: "This Month" },
+              { intId: 0, description: "Today" },
+              { intId: 1, description: "This Week" },
+              { intId: 2, description: "This Month" },
             ]}
           />
 
@@ -154,8 +194,8 @@ export default function DashboardContent() {
         {isGroupDialogOpen && (
           <GroupDialog
             onClose={() => setGroupDialogOpen(false)}
-            selectedGroups={selectedGroups}  // ✅ Now supported
-            onChange={(updated) => setSelectedGroups(updated)}  // ✅ Now works
+            selectedGroups={selectedGroups}
+            onChange={(updated) => setSelectedGroups(updated)}
           />
         )}
 
@@ -176,7 +216,7 @@ export default function DashboardContent() {
                   style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }}
                   className="text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer"
                 >
-                  Selling Fast
+                  {selectedTag == -1 ? 'All' : selectedTag}
                   <ChevronDown size={14} />
                 </Button>
               </span>
@@ -188,28 +228,38 @@ export default function DashboardContent() {
             {/* Horizontal Scrollable List */}
             <div className="grid lg:grid-cols-10 gap-6 w-full">
               <div className="col-span-10 flex gap-4 overflow-x-auto">
-                {['Aurora Heights', 'Skyline Park', 'Nova Vista'].map((project, idx) => (
-                  <div
-                    key={idx}
-                    className="relative min-w-[240px] max-w-[320px] rounded-xl overflow-hidden shadow cursor-pointer"
-                  >
-                    <img
-                      src={ImagePaths.avatar}
-                      alt={project}
-                      className="h-64 object-cover "
-                    />
-                    <div
-                      className="absolute top-2 left-2 rounded text-white px-2 py-1"
-                      style={{ background: colors.brookedStatus, fontWeight: 600, fontSize: 14 }}
-                    >
-                      Selling Fast
-                    </div>
-                    <div className="absolute bottom-2 left-2 text-white">
-                      <p style={{ fontSize: 18, fontWeight: 900, fontFamily: fonts.inter }}>{project}</p>
-                      <p style={{ fontSize: 14, fontFamily: fonts.outfit }}>Jln Bersatu, Taman Bukit Serdang</p>
-                    </div>
+                {!dashboardData?.projects ? (
+                  <div className="flex gap-4 overflow-x-auto">
+                    {Array(3).fill(0).map((_, idx) => (
+                      <div key={idx} className="min-w-[240px] h-64 bg-gray-200 animate-pulse rounded-xl" />
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="col-span-10 flex gap-4 overflow-x-auto">
+                    {dashboardData.projects.map((project) => (
+                      <div
+                        key={project.projectId}
+                        className="relative min-w-[240px] max-w-[320px] rounded-xl overflow-hidden shadow cursor-pointer"
+                      >
+                        <img
+                          src={ImagePaths.avatar}
+                          alt={project.projectName}
+                          className="h-64 object-cover"
+                        />
+                        <div
+                          className="absolute top-2 left-2 rounded text-white px-2 py-1"
+                          style={{ background: tagColors[project.tagId], fontWeight: 600, fontSize: 14 }}
+                        >
+                          {project.tagName}
+                        </div>
+                        <div className="absolute bottom-2 left-2 text-white">
+                          <p style={{ fontSize: 18, fontWeight: 900, fontFamily: fonts.inter }}>{project.projectName}</p>
+                          <p style={{ fontSize: 14, fontFamily: fonts.outfit }}>{project.projectAddress}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
             </div>
@@ -230,13 +280,23 @@ export default function DashboardContent() {
                 <img className="cursor-pointer" src={IconPaths.filter} onClick={() => setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
               </div>
               <div className="flex flex-col justify-between h-full flex-1">
-                <div className="space-y-4">
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Appointment" contact="Alex Tan" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Booking" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                  <StatusCard type="Timeline" note="Aurora Heights A-03-11 Booked Successfully." time="Today 11:30 AM" />
-                </div>
+                {!dashboardData?.activities ? (
+                  <div className="space-y-4">
+                    {Array(3).fill(0).map((_, idx) => (
+                      <SkeletonBox key={idx} height="h-16" className="w-full" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {dashboardData.activities.map((activity) => (
+                      <StatusCard
+                        activity={activity}
+                        activityName={dashboardData.activityfilters[activity.category]?.description}
+                      />
+                    ))}
+                  </div>
+                )}
+
                 <div className="flex justify-end mt-4">
                   <span style={{ fontSize: 14, color: colors.redRuby, textDecoration: 'underline', cursor: 'pointer' }}>View More</span>
                 </div>
@@ -265,7 +325,12 @@ export default function DashboardContent() {
                   </div>
                 </div>
 
-                <CircleChart title="Property 1" total={42} data={chartData} />
+                {dashboardData ? (
+                  <CircleChart title="Property 1" total={42} data={chartData} />
+                ) : (
+                  <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
+                )}
+
 
                 <div className="flex flex-col mt-8">
                   <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Personnel</div>
@@ -312,7 +377,8 @@ export default function DashboardContent() {
 
                           {/* Responsive Chart */}
                           <div className="w-full h-[250px]">
-                            <ResponsiveContainer width="100%" height="100%">
+                            {dashboardData ? (
+                              <ResponsiveContainer width="100%" height="100%">
                               <BarChart
                                 data={floorData}
                                 margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
@@ -329,7 +395,10 @@ export default function DashboardContent() {
                                 <Tooltip />
                                 <Bar dataKey="floor" fill={colors.redRuby} radius={[6, 6, 0, 0]} />
                               </BarChart>
-                            </ResponsiveContainer>
+                              </ResponsiveContainer>
+                            ) : (
+                              <SkeletonBox height="h-[250px]" className="w-full rounded-xl" />
+                            )}
                           </div>
                         </div>
                       </div>

@@ -120,7 +120,7 @@ const Login: React.FC = () => {
 
     const deviceInfo = await getDeviceInfo();
 
-    const payload = {
+    const loginData = {
       userName,
       password,
       languageId: 1,
@@ -128,10 +128,14 @@ const Login: React.FC = () => {
     };
 
     try {
-      const res = await axios.post(`${BASE_URL}promasterauthentication/login`, payload);
+      const res = await axios.post(`${BASE_URL}promasterauthentication/login`, loginData);
 
       if (res.status === 200) {
+        const accessToken = res.data.result.subcriber.accessToken;
+        localStorage.setItem("accessToken", accessToken);
+        console.log('accecss token: ' + accessToken);
         showSuccessToast("Login success!");
+
         navigate('/Dashboard');
         setIsSubmit(false);
       } else {
@@ -148,7 +152,6 @@ const Login: React.FC = () => {
 
   return (
     <>
-      {/* Fixed Icon Layer */}
       {/* Fixed Icon Layer */}
       {(!isMobile || (isMobile && showLogin)) && (
         <FixedTopIcons
