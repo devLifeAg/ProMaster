@@ -96,7 +96,7 @@ export const CircleChart = ({ title, total, data }: CircleChartProps) => {
               strokeWidth={6}
               labelLine={false}
             >
-              {data.map((entry, idx) => (
+              {data.map((_, idx) => (
                 <Cell key={idx} fill={hexToRgba(tagColors[idx % tagColors.length], 0.8)} />
               ))}
             </Pie>
