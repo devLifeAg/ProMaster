@@ -4,18 +4,18 @@ import { IconPaths } from "../constants/consts";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 
-interface ListGroup {
-    name: string;
-    items: string[];
+export interface ListGroup {
+  groupName: string;
+  itemsName: string[];
 }
 
 interface PropertyDialogProps {
     onClose: () => void;
     data: ListGroup[] | string[];
     onChange?: (selected: string[]) => void;
-    onConfirm?: (selected: string[]) => void; // Thay đổi ở đây
-    title?: string; // Thêm prop title
-    selected?: string[]; // Thêm prop này
+    onConfirm?: (selected: string[]) => void;
+    title?: string;
+    selected?: string[];
 }
 
 export default function PropertyDialog({ onClose, data, title, selected = [], ...props }: PropertyDialogProps) {
@@ -150,7 +150,7 @@ export default function PropertyDialog({ onClose, data, title, selected = [], ..
                                 {isGrouped
                                     ? (data as ListGroup[]).map((group, index) => (
                                         <div key={index}>
-                                            {renderItems(group.items, group.name)}
+                                            {renderItems(group.itemsName, group.groupName)}
                                         </div>
                                     ))
                                     : renderItems(data as string[])}

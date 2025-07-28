@@ -1,15 +1,13 @@
-// components/TagDialog.tsx
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import colors from "../styles/colors";
-import { IconPaths } from '../constants/consts';
-// import type { ProjectTag } from '../models/Dashboard';
+import { IconPaths } from "../constants/consts";
 
 interface TagDialogProps {
   onClose: () => void;
   selected: number;
   dialogType: number;
   data: any;
-  onSelect: (value: number) => void;
+  onConfirm?: (value: number) => void;
 }
 
 const tagColors: Record<number, string> = {
@@ -18,15 +16,15 @@ const tagColors: Record<number, string> = {
   67846: colors.reserveStatus,
 };
 
-
 export default function DashboardDialog({
   onClose,
   selected,
-  onSelect,
+  onConfirm,
   dialogType,
   data,
 }: TagDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [tempSelected, setTempSelected] = useState<number>(selected);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -37,6 +35,10 @@ export default function DashboardDialog({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
+
+  useEffect(() => {
+    setTempSelected(selected);
+  }, [selected]);
 
   const getIcon = () => {
     if (dialogType === 1) return IconPaths.filter;
@@ -66,7 +68,9 @@ export default function DashboardDialog({
             <button
               style={{ color: colors.redRuby, fontSize: 18, fontWeight: 500 }}
               className="cursor-pointer"
-              onClick={() => onSelect(-1)}
+              onClick={() => {
+                setTempSelected(selected);
+              }}
             >
               Reset
             </button>
@@ -75,14 +79,14 @@ export default function DashboardDialog({
 
         <hr />
 
-        {/* Nội dung */}
+        {/* Body */}
         <div className="space-y-4 p-6 max-h-[60vh] overflow-y-auto">
           {data.map((tag: any) => {
-            const isSelected = selected === tag.intId;
+            const isSelected = tempSelected === tag.intId;
             return (
               <div key={tag.intId} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {dialogType == 0 && (
+                  {dialogType === 0 && (
                     <span
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: tagColors[tag.intId] }}
@@ -95,7 +99,9 @@ export default function DashboardDialog({
                     type="radio"
                     name="tag"
                     checked={isSelected}
-                    onChange={() => onSelect(tag.intId)}
+                    onChange={() => {
+                      setTempSelected(tag.intId);
+                    }}
                     className="sr-only"
                   />
                   <div
@@ -117,7 +123,10 @@ export default function DashboardDialog({
           <button
             className="w-full cursor-pointer py-2 rounded-full text-white font-semibold"
             style={{ backgroundColor: colors.redRuby }}
-            onClick={onClose}
+            onClick={() => {
+              onConfirm?.(tempSelected);
+              onClose();
+            }}
           >
             Apply
           </button>
