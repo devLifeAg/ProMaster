@@ -356,7 +356,7 @@ export default function DashboardContent() {
             <CardContent className="flex flex-col h-full justify-between">
               <div className="flex items-center justify-between mb-4">
                 <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
-                {dashboardData?.activityfilters ?
+                {!dashboardData?.activityfilters ?
                   <SkeletonBox height="h-6" width="w-6" rounded="rounded-full" className="inline-block" />
                   :
                   <img className="cursor-pointer" src={IconPaths.filter} onClick={() => setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
