@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleChart } from "./CircleChart";
@@ -22,6 +22,7 @@ export default function ChartCarousel({ charts }: ChartCarouselProps) {
       setActiveIndex((prev) => prev + 1);
     }
   };
+
 
   const activeChart = charts[activeIndex];
   const isBarChart = activeChart.chartType === "Bar";

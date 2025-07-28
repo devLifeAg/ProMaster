@@ -8,7 +8,7 @@ import fonts from "../../styles/fonts";
 import TagDialog from "../../components/DashboardDialog";
 import SelectDialog from "../../components/SelectDialog";
 import GroupDialog from "../../components/GroupDialog";
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../constants/consts';
 import { showErrorToast } from '../../components/ToasService';
@@ -21,6 +21,8 @@ import SkeletonBox from '../../components/SkeletonBox';
 
 type ContextType = {
   setUserInfo: (info: UserProfile) => void;
+  dashboardData: DashboardData | null;
+  setDashboardData: (data: DashboardData) => void;
 };
 
 
@@ -71,16 +73,19 @@ export default function DashboardContent() {
 
 
 
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const { setUserInfo } = useOutletContext<ContextType>();
-
-
-
+  // const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const { setUserInfo, dashboardData, setDashboardData } = useOutletContext<ContextType>();
 
 
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      if (dashboardData !== null) {
+      console.log('ko fetch');
+        return;
+      }
+      console.log('fetch');
+
       const accessToken = localStorage.getItem('accessToken');
 
       try {
@@ -89,14 +94,15 @@ export default function DashboardContent() {
           {
             headers: {
               AccessToken: accessToken,
-            }
+            },
           }
         );
+
         const result = response.data.result as DashboardData;
 
-        console.log('Full response:', response.data);
         setDashboardData(result);
         setUserInfo(result.userprofile);
+
         const statisticData = processStatistics(result.statistics);
         setPropertyData(statisticData.propertyData);
         setPropertyChartType(statisticData.propertyChartType);
@@ -105,39 +111,33 @@ export default function DashboardContent() {
         setPeriodData(statisticData.periodData);
         setPeriodChartType(statisticData.periodChartType);
 
-        // Sau khi gán xong mới set selected
-        setSelectedTag(result.projecttags[0]);
-        setSelectedFilter(result.activityfilters[0]);
-        setSelectedChart1(statisticData.propertyChartType[0]);
-        setSelectedChart2(statisticData.personnelChartType[0]);
-        setSelectedChart3(statisticData.periodChartType[0]);
+        setSelectedTag(result.projecttags?.[0] ?? null);
+        setSelectedFilter(result.activityfilters?.[0] ?? null);
+        setSelectedChart1(statisticData.propertyChartType?.[0] ?? null);
+        setSelectedChart2(statisticData.personnelChartType?.[0] ?? null);
+        setSelectedChart3(statisticData.periodChartType?.[0] ?? null);
 
-        const propertyCharts = processCharts(
+        setPropertyCharts(processCharts(
           result.statistics[0].records,
-          selectedChart1?.description ?? statisticData.propertyChartType[0]?.description ?? ""
-        );
-        const personnelCharts = processCharts(
+          statisticData.propertyChartType?.[0]?.description ?? ""
+        ));
+        setPersonnelCharts(processCharts(
           result.statistics[1].records,
-          statisticData.personnelChartType[0]?.description ?? ""
-        );
-        const periodCharts = processCharts(
+          statisticData.personnelChartType?.[0]?.description ?? ""
+        ));
+        setPeriodCharts(processCharts(
           result.statistics[2].records,
-          statisticData.periodChartType[0]?.description ?? ""
-        );
-
-        // Nếu cần lưu vào state:
-        setPropertyCharts(propertyCharts);
-        setPersonnelCharts(personnelCharts);
-        setPeriodCharts(periodCharts);
+          statisticData.periodChartType?.[0]?.description ?? ""
+        ));
 
       } catch (error) {
         showErrorToast('Error fetching dashboard data: ' + error);
-        console.log('Error fetching dashboard data: ' + error);
+        console.error('Error fetching dashboard data:', error);
       }
     };
 
     fetchDashboardData();
-  }, []);
+  }, [dashboardData, setUserInfo, setDashboardData]);
 
 
   return (

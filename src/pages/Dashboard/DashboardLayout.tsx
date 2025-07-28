@@ -3,7 +3,7 @@ import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import colors from '../../styles/colors';
 import { LogOut, Menu, Search, X } from "lucide-react";
 import { ImagePaths, IconPaths } from '../../constants/consts';
-import type { UserProfile } from '../../models/Dashboard';
+import type { UserProfile, DashboardData } from '../../models/Dashboard';
 
 const menuItems = [
   { label: "Dashboard", icon: IconPaths.dashboard, key: "dashboard" },
@@ -30,6 +30,7 @@ export default function DashboardLayout() {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
   const activeKey = location.pathname.split('/')[2] || 'dashboard';
 
@@ -153,7 +154,7 @@ export default function DashboardLayout() {
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto bg-gray-100">
-          <Outlet context={{ setUserInfo }} />
+          <Outlet context={{ setUserInfo, dashboardData, setDashboardData }} />
         </div>
       </div>
     </div>
