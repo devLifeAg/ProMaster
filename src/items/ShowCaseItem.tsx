@@ -21,7 +21,7 @@ const getTagInfo = (tag: number): { text: string; color: string } | null => {
         case 1:
             return { text: "Last Few Units", color: colors.reserveStatus };
         case 2:
-            return { text: "Selling Fast", color: colors.brookedStatus };
+            return { text: "Selling Fast", color: colors.bookedStatus };
         default:
             return null;
     }

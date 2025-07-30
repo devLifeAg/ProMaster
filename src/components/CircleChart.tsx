@@ -18,7 +18,7 @@ const tagColors = [
   colors.availableStatus,
   colors.reserveStatus,
   colors.waitingStatus,
-  colors.brookedStatus,
+  colors.bookedStatus,
 ];
 
 

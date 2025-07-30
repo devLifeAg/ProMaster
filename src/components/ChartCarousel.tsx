@@ -1,17 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleChart } from "./CircleChart";
 import ResponsiveBarChart from "./ResponsiveBarChart";
-import type { ChartDataItem } from "../models/Dashboard";
+import type { ChartDataItem } from "../models/DashboardData";
 
 interface ChartCarouselProps {
   charts: ChartDataItem[];
 }
 
 export default function ChartCarousel({ charts }: ChartCarouselProps) {
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<"left" | "right">("right");
+
+  if (!Array.isArray(charts) || charts.length === 0) {
+    return (
+      <div className="w-full py-10 text-center text-gray-500 text-sm">
+        No chart available
+      </div>
+    );
+  }
 
   const paginate = (dir: "left" | "right") => {
     if (dir === "left" && activeIndex > 0) {
@@ -22,7 +31,6 @@ export default function ChartCarousel({ charts }: ChartCarouselProps) {
       setActiveIndex((prev) => prev + 1);
     }
   };
-
 
   const activeChart = charts[activeIndex];
   const isBarChart = activeChart.chartType === "Bar";
@@ -37,9 +45,8 @@ export default function ChartCarousel({ charts }: ChartCarouselProps) {
         <ChevronLeft
           size={28}
           onClick={() => paginate("left")}
-          className={`cursor-pointer transition ${
-            isFirst ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:text-gray-700"
-          }`}
+          className={`cursor-pointer transition ${isFirst ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:text-gray-700"
+            }`}
         />
       </div>
 
@@ -48,9 +55,8 @@ export default function ChartCarousel({ charts }: ChartCarouselProps) {
         <ChevronRight
           size={28}
           onClick={() => paginate("right")}
-          className={`cursor-pointer transition ${
-            isLast ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:text-gray-700"
-          }`}
+          className={`cursor-pointer transition ${isLast ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:text-gray-700"
+            }`}
         />
       </div>
 

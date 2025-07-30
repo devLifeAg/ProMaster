@@ -8,26 +8,20 @@ import fonts from "../../styles/fonts";
 import TagDialog from "../../components/DashboardDialog";
 import SelectDialog from "../../components/SelectDialog";
 import GroupDialog from "../../components/GroupDialog";
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../constants/consts';
 import { showErrorToast } from '../../components/ToasService';
-import type { DashboardData, UserProfile, ChartDataItem } from '../../models/Dashboard';
-import { processStatistics, processCharts } from '../../models/Dashboard';
+import type { DashboardData, ChartDataItem } from '../../models/DashboardData';
+import { processStatistics, processCharts } from '../../models/DashboardData';
 import ChartCarousel from "../../components/ChartCarousel";
 
-import { useOutletContext } from "react-router-dom";
+import { useUserContext} from '../../contexts/UserContext';
+
 import SkeletonBox from '../../components/SkeletonBox';
 
-type ContextType = {
-  setUserInfo: (info: UserProfile) => void;
-  dashboardData: DashboardData | null;
-  setDashboardData: (data: DashboardData) => void;
-};
-
-
 const tagColors: Record<number, string> = {
-  67845: colors.brookedStatus,
+  67845: colors.bookedStatus,
   67861: colors.waitingStatus,
   67846: colors.reserveStatus,
 };
@@ -73,19 +67,14 @@ export default function DashboardContent() {
 
 
 
-  // const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const { setUserInfo, dashboardData, setDashboardData } = useOutletContext<ContextType>();
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const { setUserInfo } = useUserContext();
 
 
 
   useEffect(() => {
+    console.log('fetch');
     const fetchDashboardData = async () => {
-      if (dashboardData !== null) {
-      console.log('ko fetch');
-        return;
-      }
-      console.log('fetch');
-
       const accessToken = localStorage.getItem('accessToken');
 
       try {
@@ -94,50 +83,63 @@ export default function DashboardContent() {
           {
             headers: {
               AccessToken: accessToken,
-            },
+            }
           }
         );
-
         const result = response.data.result as DashboardData;
 
+        console.log('Full response:', response.data);
         setDashboardData(result);
         setUserInfo(result.userprofile);
+        if (result.projecttags != null && result.projecttags.length > 0) {
+          setSelectedTag(result.projecttags[0]);
+        }
 
-        const statisticData = processStatistics(result.statistics);
-        setPropertyData(statisticData.propertyData);
-        setPropertyChartType(statisticData.propertyChartType);
-        setPersonnelData(statisticData.personnelData);
-        setPersonnelChartType(statisticData.personnelChartType);
-        setPeriodData(statisticData.periodData);
-        setPeriodChartType(statisticData.periodChartType);
+        if (result.activityfilters != null && result.activityfilters.length > 0) {
+          setSelectedFilter(result.activityfilters[0]);
 
-        setSelectedTag(result.projecttags?.[0] ?? null);
-        setSelectedFilter(result.activityfilters?.[0] ?? null);
-        setSelectedChart1(statisticData.propertyChartType?.[0] ?? null);
-        setSelectedChart2(statisticData.personnelChartType?.[0] ?? null);
-        setSelectedChart3(statisticData.periodChartType?.[0] ?? null);
+        }
 
-        setPropertyCharts(processCharts(
-          result.statistics[0].records,
-          statisticData.propertyChartType?.[0]?.description ?? ""
-        ));
-        setPersonnelCharts(processCharts(
-          result.statistics[1].records,
-          statisticData.personnelChartType?.[0]?.description ?? ""
-        ));
-        setPeriodCharts(processCharts(
-          result.statistics[2].records,
-          statisticData.periodChartType?.[0]?.description ?? ""
-        ));
+        if (result.statistics != null) {
+          const statisticData = processStatistics(result.statistics);
+          setPropertyData(statisticData.propertyData);
+          setPropertyChartType(statisticData.propertyChartType);
+          setPersonnelData(statisticData.personnelData);
+          setPersonnelChartType(statisticData.personnelChartType);
+          setPeriodData(statisticData.periodData);
+          setPeriodChartType(statisticData.periodChartType);
 
+          // Sau khi gán xong mới set selected
+          setSelectedChart1(statisticData.propertyChartType[0]);
+          setSelectedChart2(statisticData.personnelChartType[0]);
+          setSelectedChart3(statisticData.periodChartType[0]);
+
+          const propertyCharts = processCharts(
+            result.statistics[0].records,
+            selectedChart1?.description ?? statisticData.propertyChartType[0]?.description ?? ""
+          );
+          const personnelCharts = processCharts(
+            result.statistics[1].records,
+            statisticData.personnelChartType[0]?.description ?? ""
+          );
+          const periodCharts = processCharts(
+            result.statistics[2].records,
+            statisticData.periodChartType[0]?.description ?? ""
+          );
+
+          // Nếu cần lưu vào state:
+          setPropertyCharts(propertyCharts);
+          setPersonnelCharts(personnelCharts);
+          setPeriodCharts(periodCharts);
+        }
       } catch (error) {
         showErrorToast('Error fetching dashboard data: ' + error);
-        console.error('Error fetching dashboard data:', error);
+        console.log('Error fetching dashboard data: ' + error);
       }
     };
 
     fetchDashboardData();
-  }, [dashboardData, setUserInfo, setDashboardData]);
+  }, []);
 
 
   return (
@@ -288,7 +290,7 @@ export default function DashboardContent() {
                 </span>
                 {dashboardData?.projecttags ? <Button
                   onClick={() => setDialogOpen(!isDialogOpen)}
-                  style={{ background: tagColors[selectedTag?.intId ?? 0] || colors.brookedStatus, fontWeight: 600, fontSize: 14 }}
+                  style={{ background: tagColors[selectedTag?.intId ?? 0] || colors.bookedStatus, fontWeight: 600, fontSize: 14 }}
                   className="text-white hover:bg-blue-600 rounded-md flex items-center gap-1 cursor-pointer"
                 >
                   {selectedTag?.description}
@@ -356,14 +358,11 @@ export default function DashboardContent() {
             <CardContent className="flex flex-col h-full justify-between">
               <div className="flex items-center justify-between mb-4">
                 <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
-                {!dashboardData?.activityfilters ?
-                  <SkeletonBox height="h-6" width="w-6" rounded="rounded-full" className="inline-block" />
-                  :
-                  <img className="cursor-pointer" src={IconPaths.filter} onClick={() => setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
-                }
+                <img className="cursor-pointer" src={IconPaths.filter} onClick={() => !dashboardData?.activityfilters ? null : setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
+
               </div>
               <div className="flex flex-col justify-between h-full flex-1">
-                {!dashboardData?.activities ? (
+                {!dashboardData ? (
                   <div className="space-y-4">
                     {Array(3).fill(0).map((_, idx) => (
                       <SkeletonBox key={idx} height="h-16" className="w-full" />
@@ -371,7 +370,7 @@ export default function DashboardContent() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {dashboardData.activities.filter((activity) => activity.category === selectedFilter?.intId).map((activity) => (
+                    {dashboardData.activities && dashboardData.activities.filter((activity) => activity.category === selectedFilter?.intId).map((activity) => (
                       <StatusCard
                         activity={activity}
                         activityName={dashboardData.activityfilters[activity.category]?.description}
@@ -379,7 +378,7 @@ export default function DashboardContent() {
                     ))}
                   </div>
                 )}
-                {(dashboardData?.activities.length == 0) && (<div className="">
+                {(!dashboardData?.activities || dashboardData.activities.length == 0) && (<div>
                   <span style={{ fontSize: 14, color: colors.greyInputText }}>Nothing to show</span>
                 </div>)}
                 {(dashboardData?.activities && dashboardData?.activities.length > 0) && (<div className="flex justify-end mt-4">
@@ -401,18 +400,20 @@ export default function DashboardContent() {
 
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
-                      {selectedChart1 ? (
+                      {!dashboardData ? (
+                        <SkeletonBox height="h-6" width="w-32" />
+                      ) : selectedChart1 ? (
                         <>
                           <p
                             onClick={() => setDialogChart1Open(!isDialogChart1Open)}
                             style={{ color: colors.redRuby, fontSize: '20px', fontWeight: 700 }}
                           >
-                            {selectedChart1.description}
+                            {selectedChart1!.description}
                           </p>
                           <ChevronDown size={22} color={colors.redRuby} />
                         </>
                       ) : (
-                        <SkeletonBox height="h-6" width="w-32" />
+                        <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
                       )}
                     </div>
                     {!dashboardData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
@@ -441,7 +442,9 @@ export default function DashboardContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
                       <div className="flex items-center gap-2">
-                        {selectedChart2 ? (
+                        {!dashboardData ? (
+                          <SkeletonBox height="h-6" width="w-32" />
+                        ) : selectedChart2 ? (
                           <>
                             <p
                               onClick={() => setDialogChart2Open(!isDialogChart2Open)}
@@ -452,7 +455,7 @@ export default function DashboardContent() {
                             <ChevronDown size={22} color={colors.redRuby} />
                           </>
                         ) : (
-                          <SkeletonBox height="h-6" width="w-32" />
+                          <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
                         )}
                       </div>
                     </div>
@@ -473,12 +476,14 @@ export default function DashboardContent() {
                     <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
                   )}
                 </div>
-                {periodChartType.length > 0 && (<div className="flex flex-col mt-8">
+                <div className="flex flex-col mt-8">
                   <div className="mb-4" style={{ color: colors.blackDark, fontSize: '16px', fontFamily: fonts.outfit }}>By Period</div>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
                       <div className="flex items-center gap-2">
-                        {selectedChart3 ? (
+                        {!dashboardData ? (
+                          <SkeletonBox height="h-6" width="w-32" />
+                        ) : selectedChart3 ? (
                           <>
                             <p
                               onClick={() => setDialogChart3Open(!isDialogChart3Open)}
@@ -489,7 +494,7 @@ export default function DashboardContent() {
                             <ChevronDown size={22} color={colors.redRuby} />
                           </>
                         ) : (
-                          <SkeletonBox height="h-6" width="w-32" />
+                          <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
                         )}
                       </div>
                     </div>
@@ -505,7 +510,7 @@ export default function DashboardContent() {
                     charts={periodCharts}
                   />
 
-                </div>)}
+                </div>
 
               </CardContent>
             </Card>

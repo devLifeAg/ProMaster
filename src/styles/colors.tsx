@@ -17,7 +17,7 @@ const colors = {
   greyLight:  '#F3F3F3',
 
   availableStatus: '#059669',
-  brookedStatus: '#3B82F6',
+  bookedStatus: '#3B82F6',
   reserveStatus: '#F97316',
 
   activeStatus: '#25AD5E',

@@ -11,7 +11,7 @@ interface TagDialogProps {
 }
 
 const tagColors: Record<number, string> = {
-  67845: colors.brookedStatus,
+  67845: colors.bookedStatus,
   67861: colors.waitingStatus,
   67846: colors.reserveStatus,
 };

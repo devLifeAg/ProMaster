@@ -1,6 +1,6 @@
 import React from 'react';
 import colors, {hexToRgba} from '../styles/colors';
-import type { Activity } from '../models/Dashboard';
+import type { Activity } from '../models/DashboardData';
 
 // Loại trạng thái
 // type StatusType = 'Booking' | 'Appointment' | 'Timeline';
@@ -13,7 +13,7 @@ interface StatusCardProps {
 // Mapping màu theo loại
 const statusColors: Record<number, { color: string; badgeText: string }> = {
   2: {
-    color: colors.brookedStatus,
+    color: colors.bookedStatus,
     badgeText: 'Booked',
   },
   1: {
@@ -71,8 +71,8 @@ const StatusCard: React.FC<StatusCardProps> = ({ activity, activityName }) => {
           <div
             style={{
               background: activity.category == 2 ? cardColors.color : colors.whiteCloud,
-              color: activity.category == 2 ? colors.whiteCloud : activity.category == 3 ? colors.brookedStatus : cardColors.color,
-              border: activity.category != 2 ? `1px solid ${activity.category == 3 ? colors.brookedStatus : cardColors.color}` : '',
+              color: activity.category == 2 ? colors.whiteCloud : activity.category == 3 ? colors.bookedStatus : cardColors.color,
+              border: activity.category != 2 ? `1px solid ${activity.category == 3 ? colors.bookedStatus : cardColors.color}` : '',
               padding: '6px 12px',
               fontSize: 14,
               borderRadius: 10,
