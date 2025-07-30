@@ -11,6 +11,7 @@ export type ShowcaseItemProps = {
     availability?: string;
     address?: string;
     pinned?: boolean;
+    loadImageDone: boolean;
     onTogglePin?: () => void; // Optional callback
 };
 
@@ -31,10 +32,11 @@ export default function ShowcaseItem({
     title,
     tag = 0,
     image = ImagePaths.avatar,
-    availability = "150/500 Available",
-    address = "Jln Bersatu, Taman Bukit Serdang",
+    availability = '0/0 Available',
+    address = 'Not have address yet',
     pinned = false,
     onTogglePin,
+    loadImageDone
 }: ShowcaseItemProps) {
     const [isPinned, setIsPinned] = useState(pinned);
 
@@ -45,40 +47,44 @@ export default function ShowcaseItem({
     };
 
     return (
-        <div className="relative min-w-[360px] max-w-[460px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white">
-            <div className="relative">
-                <img src={image} alt={title} className="w-full h-48 object-cover" />
+        <div className="relative min-w-[320px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white">
+            {!loadImageDone ? (
+                <div className="w-full h-36 bg-gray-200 animate-pulse" />
+            ) : (
+                <img src={image} alt={title} className="w-full h-36 object-cover" />
+            )}
 
-                {getTagInfo(tag) && (
-                    <div
-                        className="absolute top-3 left-3 text-white px-2 py-1 rounded-md"
-                        style={{
-                            background: getTagInfo(tag)?.color,
-                            fontWeight: 600,
-                            fontSize: 14,
-                            fontFamily: fonts.outfit,
-                        }}
-                    >
-                        {getTagInfo(tag)?.text}
-                    </div>
-                )}
 
+
+            {getTagInfo(tag) && (
                 <div
-                    className="absolute top-3 right-3 p-2 rounded-full bg-white/50 cursor-pointer"
-                    onClick={handleTogglePin}
+                    className="absolute top-3 left-3 text-white px-2 py-1 rounded-md"
+                    style={{
+                        background: getTagInfo(tag)?.color,
+                        fontWeight: 600,
+                        fontSize: 14,
+                        fontFamily: fonts.outfit,
+                    }}
                 >
-                    {isPinned ? (
-                        <BsBookmarkFill style={{ color: colors.redRuby }} size={24} />
-                    ) : (
-                        <BsBookmark style={{ color: colors.blackDark }} size={24} />
-                    )}
+                    {getTagInfo(tag)?.text}
                 </div>
+            )}
+
+            <div
+                className="absolute top-3 right-3 p-2 rounded-full bg-white/50 cursor-pointer"
+                onClick={handleTogglePin}
+            >
+                {isPinned ? (
+                    <BsBookmarkFill style={{ color: colors.redRuby }} size={24} />
+                ) : (
+                    <BsBookmark style={{ color: colors.blackDark }} size={24} />
+                )}
             </div>
 
             <div className="p-3 bg-white">
                 <div className="flex justify-between">
                     <div>
-                        <div className="mb-2" style={{ color: colors.blackDark, fontWeight: 700, fontSize: 18, fontFamily: fonts.outfit }}>
+                        <div className="mb-2 truncate" style={{ maxWidth: 180, color: colors.blackDark, fontWeight: 700, fontSize: 18, fontFamily: fonts.outfit }}>
                             {title}
                         </div>
                         <div className="rounded-full px-2 py-1 w-fit mb-2" style={{ color: colors.whiteCloud, fontWeight: 600, fontSize: 14, fontFamily: fonts.outfit, background: colors.availableStatus }}>{availability}</div>

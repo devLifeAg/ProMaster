@@ -6,6 +6,7 @@ import Login from "./pages/LoginPage/Login";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import DashboardContent from "./pages/Dashboard/Dashboard";
 import ShowcaseContent from "./pages/ShowCase/ShowCaseContent";
+import MobileNoticeModal from "./components/MobileNoticeModal";
 
 import { UserContext} from './contexts/UserContext';
 
@@ -56,6 +57,7 @@ function App() {
           </Routes>
         </AliveScope>
       </BrowserRouter>
+      <MobileNoticeModal />
       </UserContext.Provider>
     </>
   );

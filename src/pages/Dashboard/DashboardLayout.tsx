@@ -5,8 +5,6 @@ import { LogOut, Menu, Search, X } from "lucide-react";
 import { ImagePaths, IconPaths } from '../../constants/consts';
 import { useUserContext} from '../../contexts/UserContext';
 
-// import { DashboardContext } from './DashboardContext';
-
 const menuItems = [
   { label: "Dashboard", icon: IconPaths.dashboard, key: "dashboard" },
   { label: "Showcase", icon: IconPaths.showcase, key: "Showcase" },
@@ -59,7 +57,12 @@ export default function DashboardLayout() {
           <div>
             <div className="flex items-center justify-between p-6 border-b">
               <img src={ImagePaths.logo} alt="ProMaster Logo" />
-              <X className="lg:hidden cursor-pointer" color={colors.redRuby} onClick={() => setSidebarOpen(false)} />
+              <X className="lg:hidden cursor-pointer" size={26} color={colors.redRuby} onClick={() => setSidebarOpen(false)} />
+                <Menu
+                className="hidden lg:block cursor-pointer"
+                color={colors.redRuby}
+                size={26}
+              />
             </div>
             <ul className="space-y-4 text-sm mt-4">
               {menuItems.map((item, idx) => {

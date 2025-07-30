@@ -373,39 +373,69 @@ export default function DashboardContent() {
 
           {/* Activities */}
           <Card className="lg:col-span-4 order-1 lg:order-2">
-            <CardContent className="flex flex-col h-full justify-between">
+            <CardContent className="flex flex-col h-full">
               <div className="flex items-center justify-between mb-4">
                 <div style={{ fontSize: '20px', fontWeight: 700, color: colors.blackDark }}>Activities</div>
-                <img className="cursor-pointer" src={IconPaths.filter} onClick={() => !dashboardData?.activityfilters ? null : setDialogFilterOpen(!isDialogFilterOpen)} alt="icon filter" />
-
+                <img
+                  className="cursor-pointer"
+                  src={IconPaths.filter}
+                  onClick={() =>
+                    !dashboardData?.activityfilters
+                      ? null
+                      : setDialogFilterOpen(!isDialogFilterOpen)
+                  }
+                  alt="icon filter"
+                />
               </div>
-              <div className="flex flex-col justify-between h-full flex-1">
+
+              <div className="flex flex-col flex-1 space-y-4">
                 {!dashboardData ? (
-                  <div className="space-y-4">
-                    {Array(3).fill(0).map((_, idx) => (
-                      <SkeletonBox key={idx} height="h-16" className="w-full" />
-                    ))}
-                  </div>
+                  Array(3)
+                    .fill(0)
+                    .map((_, idx) => <SkeletonBox key={idx} height="h-16" className="w-full" />)
                 ) : (
-                  <div className="space-y-4">
-                    {dashboardData.activities && dashboardData.activities.filter((activity) => activity.category === selectedFilter?.intId).map((activity) => (
-                      <StatusCard
-                        activity={activity}
-                        activityName={dashboardData.activityfilters[activity.category]?.description}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    {dashboardData.activities &&
+                      dashboardData.activities.filter((activity) => activity.category === selectedFilter?.intId).length > 0 ? (
+                      dashboardData.activities
+                        .filter((activity) => activity.category === selectedFilter?.intId)
+                        .map((activity) => (
+                          <StatusCard
+                            key={activity.category}
+                            activity={activity}
+                            activityName={
+                              dashboardData.activityfilters[activity.category]?.description
+                            }
+                          />
+                        ))
+                    ) : (
+                      <div>
+                        <span style={{ fontSize: 14, color: colors.greyInputText }}>
+                          Nothing to show
+                        </span>
+                      </div>
+                    )}
+                  </>
                 )}
-                {(!dashboardData?.activities || dashboardData.activities.length == 0) && (<div>
-                  <span style={{ fontSize: 14, color: colors.greyInputText }}>Nothing to show</span>
-                </div>)}
-                {(dashboardData?.activities && dashboardData?.activities.length > 0) && (<div className="flex justify-end mt-4">
-                  <span style={{ fontSize: 14, color: colors.redRuby, textDecoration: 'underline', cursor: 'pointer' }}>View More</span>
-                </div>)}
-
               </div>
+
+              {dashboardData?.activities && dashboardData.activities.length > 0 && (
+                <div className="flex justify-end mt-4">
+                  <span
+                    style={{
+                      fontSize: 14,
+                      color: colors.redRuby,
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    View More
+                  </span>
+                </div>
+              )}
             </CardContent>
           </Card>
+
 
           {/* Statistics */}
           <div className="lg:col-span-6 order-2 lg:order-1">
