@@ -3,7 +3,7 @@ import { Button } from "../../components/Button";
 import { ChevronDown } from "lucide-react";
 import colors from '../../styles/colors';
 import StatusCard from '../../components/StatusCard';
-import { ImagePaths, IconPaths } from '../../constants/consts';
+import { IconPaths } from '../../constants/consts';
 import fonts from "../../styles/fonts";
 import TagDialog from "../../components/DashboardDialog";
 import SelectDialog from "../../components/SelectDialog";
@@ -15,9 +15,9 @@ import { showErrorToast } from '../../components/ToasService';
 import type { DashboardData, ChartDataItem } from '../../models/DashboardData';
 import { processStatistics, processCharts } from '../../models/DashboardData';
 import ChartCarousel from "../../components/ChartCarousel";
+import { fetchAndExtractImages } from "../../utils/FetchAndExtractImages";
 
-import { useUserContext} from '../../contexts/UserContext';
-
+import { useUserContext } from '../../contexts/UserContext';
 import SkeletonBox from '../../components/SkeletonBox';
 
 const tagColors: Record<number, string> = {
@@ -64,6 +64,9 @@ export default function DashboardContent() {
   const [propertyCharts, setPropertyCharts] = useState<ChartDataItem[]>([]);
   const [personnelCharts, setPersonnelCharts] = useState<ChartDataItem[]>([]);
   const [periodCharts, setPeriodCharts] = useState<ChartDataItem[]>([]);
+  const [projectImages, setProjectImages] = useState<Record<string, string>>({});
+
+
 
 
 
@@ -90,6 +93,16 @@ export default function DashboardContent() {
 
         console.log('Full response:', response.data);
         setDashboardData(result);
+        const photos = result.projects
+          .map((p) => p.photo)
+          .filter((photo): photo is string => !!photo?.trim());
+
+        if (photos.length > 0) {
+          fetchAndExtractImages(photos, accessToken, BASE_URL)
+            .then(setProjectImages)
+            .catch(() => console.log("can't download images"));
+        }
+
         setUserInfo(result.userprofile);
         if (result.projecttags != null && result.projecttags.length > 0) {
           setSelectedTag(result.projecttags[0]);
@@ -322,11 +335,16 @@ export default function DashboardContent() {
                           key={project.projectId}
                           className="relative min-w-[240px] max-w-[320px] rounded-xl overflow-hidden shadow cursor-pointer"
                         >
-                          <img
-                            src={ImagePaths.avatar}
-                            alt={project.projectName}
-                            className="h-64 object-cover"
-                          />
+                          {projectImages[project.photo] ? (
+                            <img
+                              src={projectImages[project.photo]}
+                              alt={project.projectName}
+                              className="h-64 object-cover"
+                            />
+                          ) : (
+                            <div className="min-w-[240px] h-64 bg-gray-200 animate-pulse rounded-xl" />
+                          )}
+
                           <div
                             className="absolute top-2 left-2 rounded text-white px-2 py-1"
                             style={{ background: tagColors[project.tagId], fontWeight: 600, fontSize: 14 }}
