@@ -73,6 +73,19 @@ export default function DashboardContent() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const { setUserInfo } = useUserContext();
 
+  const fetchActivities = async (token: string) => {
+    const response = await axios.get(`${BASE_URL}promasterauthentication/dashboard/activities`, {
+      headers: { AccessToken: token }
+    });
+    return response.data.result;
+  };
+
+  const fetchStatistics = async (token: string) => {
+    const response = await axios.get(`${BASE_URL}promasterauthentication/dashboard/statistics`, {
+      headers: { AccessToken: token }
+    });
+    return response.data.result.statistics;
+  };
 
 
   useEffect(() => {
@@ -81,7 +94,7 @@ export default function DashboardContent() {
       const accessToken = localStorage.getItem('accessToken');
 
       try {
-        const response = await axios.get(
+        const dashboardRes = await axios.get(
           `${BASE_URL}promasterauthentication/dashboard`,
           {
             headers: {
@@ -89,13 +102,25 @@ export default function DashboardContent() {
             }
           }
         );
-        const result = response.data.result as DashboardData;
+        const baseData = dashboardRes.data.result;
 
-        console.log('Full response:', response.data);
-        setDashboardData(result);
-        const photos = result.projects
-          .map((p) => p.photo)
-          .filter((photo): photo is string => !!photo?.trim());
+        // 2. Fetch activities
+        const activities = await fetchActivities(accessToken!);
+
+        // 3. Fetch statistics
+        const statistics = await fetchStatistics(accessToken!);
+
+        // Gộp dữ liệu lại
+        const fullData: DashboardData = {
+          ...baseData,
+          activities,
+          statistics,
+        };
+
+        setDashboardData(fullData);
+        const photos = baseData.projects
+          .map((p: any) => p.photo)
+          .filter((photo: string): photo is string => !!photo?.trim());
 
         if (photos.length > 0) {
           fetchAndExtractImages(photos, accessToken, BASE_URL)
@@ -103,18 +128,17 @@ export default function DashboardContent() {
             .catch(() => console.log("can't download images"));
         }
 
-        setUserInfo(result.userprofile);
-        if (result.projecttags != null && result.projecttags.length > 0) {
-          setSelectedTag(result.projecttags[0]);
+        setUserInfo(baseData.userprofile);
+        if (baseData.projecttags?.length > 0) {
+          setSelectedTag(baseData.projecttags[0]);
         }
 
-        if (result.activityfilters != null && result.activityfilters.length > 0) {
-          setSelectedFilter(result.activityfilters[0]);
-
+        if (activities.activityfilters > 0) {
+          setSelectedFilter(baseData.activityfilters[0]);
         }
 
-        if (result.statistics != null) {
-          const statisticData = processStatistics(result.statistics);
+        if (statistics != null) {
+          const statisticData = processStatistics(statistics);
           setPropertyData(statisticData.propertyData);
           setPropertyChartType(statisticData.propertyChartType);
           setPersonnelData(statisticData.personnelData);
@@ -128,15 +152,15 @@ export default function DashboardContent() {
           setSelectedChart3(statisticData.periodChartType[0]);
 
           const propertyCharts = processCharts(
-            result.statistics[0].records,
+            statistics[0].records,
             selectedChart1?.description ?? statisticData.propertyChartType[0]?.description ?? ""
           );
           const personnelCharts = processCharts(
-            result.statistics[1].records,
+            statistics[1].records,
             statisticData.personnelChartType[0]?.description ?? ""
           );
           const periodCharts = processCharts(
-            result.statistics[2].records,
+            statistics[2].records,
             statisticData.periodChartType[0]?.description ?? ""
           );
 
