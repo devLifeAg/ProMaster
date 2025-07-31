@@ -497,10 +497,10 @@ export default function DashboardContent() {
                       )}
                     </div>
                     {!statisticData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
-                      : <Button onClick={() => setPropertyDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                      : propertyData.length > 0 ? <Button onClick={() => setPropertyDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                         Property
                         <ChevronDown size={14} />
-                      </Button>}
+                      </Button> : <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>}
 
                   </div>
                 </div>
@@ -539,10 +539,10 @@ export default function DashboardContent() {
                         )}
                       </div>
                     </div>
-                    {statisticData ? <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    {!statisticData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" /> : personnelData.length > 0 ? <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
-                    </Button> : <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
+                    </Button> : <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
                     }
 
                   </div>
@@ -578,10 +578,12 @@ export default function DashboardContent() {
                         )}
                       </div>
                     </div>
-                    {statisticData ? <Button onClick={() => setPeriodGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    {!statisticData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" /> : periodData.length > 0 ? <Button onClick={() => setPeriodGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
-                    </Button> : <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
+                    </Button> :
+                      <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
+
                     }
 
                   </div>
