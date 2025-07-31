@@ -47,11 +47,11 @@ export default function ShowcaseItem({
     };
 
     return (
-        <div className="relative w-full max-w-[400px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white">
+        <div className="relative w-[320px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white">
             {!loadImageDone ? (
                 <div className="w-full h-36 bg-gray-200 animate-pulse" />
             ) : (
-                <img src={image} alt={title} className="w-full h-36 max-w-full object-cover" />
+                <img src={image} alt={title} className="w-full h-36 object-cover" style={{ maxWidth: '100%'}} />
             )}
 
 
