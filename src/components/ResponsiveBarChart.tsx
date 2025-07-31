@@ -1,4 +1,4 @@
-// components/ResponsiveBarChart.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import SkeletonBox from './SkeletonBox';
 import colors from '../styles/colors';

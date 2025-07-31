@@ -6,7 +6,7 @@ import colors from "../../styles/colors";
 import { BASE_URL } from "../../constants/consts";
 import axios from "axios";
 import { fetchAndExtractImages } from "../../utils/FetchAndExtractImages";
-// import SkeletonBox from "../../components/SkeletonBox";
+import SkeletonBox from "../../components/SkeletonBox";
 
 type ShowcaseAPIItem = {
   ticketId: number;
@@ -102,7 +102,7 @@ export default function ShowcaseContent() {
                 <div className="w-full overflow-x-auto">
                   <div className="flex gap-4 p-4 w-max">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="min-w-[276px] h-[280px] bg-gray-200 animate-pulse rounded-xl" />
+                        <SkeletonBox key={i} className="w-[320px] rounded-2xl h-36" />
                     ))}
                   </div>
                 </div>

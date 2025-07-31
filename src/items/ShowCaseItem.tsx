@@ -3,6 +3,7 @@ import colors from "../styles/colors";
 import fonts from '../styles/fonts';
 import { useState } from "react";
 import { IconPaths, ImagePaths } from "../constants/consts";
+import SkeletonBox from '../components/SkeletonBox';
 
 export type ShowcaseItemProps = {
     title: string;
@@ -49,9 +50,9 @@ export default function ShowcaseItem({
     return (
         <div className="relative w-[320px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white">
             {!loadImageDone ? (
-                <div className="w-full h-36 bg-gray-200 animate-pulse" />
+                <SkeletonBox className="w-full h-36" />
             ) : (
-                <img src={image} alt={title} className="w-full h-36 object-cover" style={{ maxWidth: '100%'}} />
+                <img src={image} alt={title} className="w-full h-36 object-cover" style={{ maxWidth: '100%' }} />
             )}
 
 

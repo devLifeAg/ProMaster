@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import colors from "../styles/colors";
 import { IconPaths } from "../constants/consts";

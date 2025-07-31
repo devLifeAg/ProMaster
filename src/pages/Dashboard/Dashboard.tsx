@@ -357,7 +357,7 @@ export default function DashboardContent() {
                 {!dashboardData?.projects ? (
                   <div className="flex gap-4 overflow-x-auto">
                     {Array(3).fill(0).map((_, idx) => (
-                      <div key={idx} className="min-w-[240px] h-64 bg-gray-200 animate-pulse rounded-xl" />
+                      <SkeletonBox key={idx} className="min-w-[240px] max-w-[320px] h-64 rounded-xl" />
                     ))}
                   </div>
                 ) : (
@@ -376,7 +376,7 @@ export default function DashboardContent() {
                               className="h-64 object-cover"
                             />
                           ) : (
-                            <div className="min-w-[240px] h-64 bg-gray-200 animate-pulse rounded-xl" />
+                            <SkeletonBox className="min-w-[240px] h-64 rounded-xl" />
                           )}
 
                           <div
@@ -439,9 +439,6 @@ export default function DashboardContent() {
                             key={idx}
                             activity={activity}
                             activityFilter={activityFilterData!}
-                            // activityName={
-                            //   activityFilterData?.find(item => item.intId === activity.category)?.description || "N/A"
-                            // }
                           />
                         ))
                     ) : (
@@ -516,7 +513,7 @@ export default function DashboardContent() {
 
 
                 ) : (
-                  <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
+                  <SkeletonBox height="h-[240px]" className="w-full rounded-xl" />
                 )}
 
 
@@ -556,7 +553,7 @@ export default function DashboardContent() {
                     />
 
                   ) : (
-                    <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
+                    <SkeletonBox height="h-[240px]" className="w-full rounded-xl" />
                   )}
                 </div>
                 <div className="flex flex-col mt-8">
@@ -595,10 +592,8 @@ export default function DashboardContent() {
                     />
 
                   ) : (
-                    <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
+                    <SkeletonBox height="h-[240px]" className="w-full rounded-xl" />
                   )}
-
-
                 </div>
 
               </CardContent>
