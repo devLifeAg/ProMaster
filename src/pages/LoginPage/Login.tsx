@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from 'react';
 import { FaCog } from 'react-icons/fa';
 import colors from '../../styles/colors';
@@ -133,7 +134,6 @@ const Login: React.FC = () => {
       if (res.status === 200) {
         const accessToken = res.data.result.subcriber.accessToken;
         localStorage.setItem("accessToken", accessToken);
-        console.log('accecss token: ' + accessToken);
         showSuccessToast("Login success!");
 
         navigate('/Dashboard');

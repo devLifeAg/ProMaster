@@ -77,9 +77,6 @@ export function processCharts(statistics: StatisticRecord[], selectedChartName: 
   return Array.from(groupedByIdentity.values());
 }
 
-
-
-
 export function processStatistics(statistics: Statistic[]) {
   const result = {
     propertyData: [] as ListGroup[],
@@ -91,29 +88,41 @@ export function processStatistics(statistics: Statistic[]) {
   };
 
   statistics.forEach((statistic, index) => {
-    // Map lưu group name => Set<chartIdentityName> và chartName
-    const groupMap = new Map<string, { chartName: string; items: Set<string> }>();
+    // Map: `${groupName}::${chartName}` => { groupName, chartName, Set<items> }
+    const groupMap = new Map<string, { groupName: string; chartName: string; items: Set<string> }>();
     const chartTypeMap = new Map<string, number>();
     let chartTypeIndex = 1;
 
     for (const record of statistic.records) {
       const { group, chartIdentityName, chartName } = record;
 
-      if (!groupMap.has(group)) {
-        groupMap.set(group, { chartName, items: new Set<string>() });
+      const key = `${group}::${chartName}`; // Unique key
+
+      if (!groupMap.has(key)) {
+        groupMap.set(key, {
+          groupName: group,
+          chartName,
+          items: new Set<string>(),
+        });
       }
-      groupMap.get(group)!.items.add(chartIdentityName);
+
+      groupMap.get(key)!.items.add(chartIdentityName);
 
       if (!chartTypeMap.has(chartName)) {
         chartTypeMap.set(chartName, chartTypeIndex++);
       }
     }
 
-    const groupedData: ListGroup[] = Array.from(groupMap.entries()).map(([groupName, { chartName, items }]) => ({
-      chartName,
-      groupName,
-      itemsName: Array.from(items),
-    }));
+    const groupedData: ListGroup[] = Array.from(groupMap.values()).map(
+      ({ chartName, groupName, items }) => ({
+        chartName,
+        groupName,
+        itemsName: Array.from(items),
+      })
+    );
+
+    console.log(`🔍 Grouped Data for index ${index}:`);
+    console.table(groupedData);
 
     const chartTypes: { intId: number; description: string }[] = Array.from(chartTypeMap.entries()).map(
       ([description, intId]) => ({ intId, description })
@@ -133,3 +142,4 @@ export function processStatistics(statistics: Statistic[]) {
 
   return result;
 }
+

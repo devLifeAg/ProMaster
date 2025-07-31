@@ -227,6 +227,7 @@ export default function DashboardContent() {
               const found = personnelChartType.find((item) => item.intId === intId);
               if (found) {
                 setSelectedChart2(found);
+                  setSelectedGroups({});
                 if (dashboardData) {
                   const updatedCharts = processCharts(
                     statisticData![1].records,
@@ -250,6 +251,7 @@ export default function DashboardContent() {
               const found = periodChartType.find((item) => item.intId === intId);
               if (found) {
                 setSelectedChart3(found);
+                  setSelectedPeriodGroups({});
                 if (dashboardData) {
                   const updatedCharts = processCharts(
                     statisticData![2].records,
@@ -286,7 +288,7 @@ export default function DashboardContent() {
 
         {isGroupDialogOpen && (
           <GroupDialog
-            groupData={personnelData.filter(group => group.chartName === selectedChart2?.description)}
+            groupData={personnelData.filter(group => group.chartName == selectedChart2?.description)}
             selectedGroups={selectedGroups}
             onClose={() => setGroupDialogOpen(false)}
             onConfirm={(updatedMap) => {
