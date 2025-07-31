@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { CircleChart } from "./CircleChart";
 import ResponsiveBarChart from "./ResponsiveBarChart";
-import type { ChartDataItem } from "../models/DashboardData";
+import type { ChartDataItem } from "../models/StatiscicData";
 
 interface ChartCarouselProps {
   charts: ChartDataItem[];
