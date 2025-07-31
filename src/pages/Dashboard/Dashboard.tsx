@@ -12,8 +12,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '../../constants/consts';
 import { showErrorToast } from '../../components/ToasService';
-import type { DashboardData, ChartDataItem } from '../../models/DashboardData';
-import { processStatistics, processCharts } from '../../models/DashboardData';
+import type { DashboardData, Project } from '../../models/DashboardData';
+import type { Activity, ActivityFilter } from '../../models/ActivityData';
+import type { Statistic, ChartDataItem } from '../../models/StatiscicData';
+import { processStatistics, processCharts } from '../../models/StatiscicData';
 import ChartCarousel from "../../components/ChartCarousel";
 import { fetchAndExtractImages } from "../../utils/FetchAndExtractImages";
 
@@ -51,14 +53,14 @@ export default function DashboardContent() {
   const [isPeriodGroupDialogOpen, setPeriodGroupDialogOpen] = useState(false);
   const [selectedPeriodGroups, setSelectedPeriodGroups] = useState<Record<string, string[]>>({});
 
-  const [propertyData, setPropertyData] = useState<{ groupName: string; itemsName: string[] }[]>([]);
+  const [propertyData, setPropertyData] = useState<{ chartName: string, groupName: string; itemsName: string[] }[]>([]);
   const [propertyChartType, setPropertyChartType] = useState<{ intId: number; description: string }[]>([]);
 
 
-  const [personnelData, setPersonnelData] = useState<{ groupName: string; itemsName: string[] }[]>([]);
+  const [personnelData, setPersonnelData] = useState<{ chartName: string, groupName: string; itemsName: string[] }[]>([]);
   const [personnelChartType, setPersonnelChartType] = useState<{ intId: number; description: string }[]>([]);
 
-  const [periodData, setPeriodData] = useState<{ groupName: string; itemsName: string[] }[]>([]);
+  const [periodData, setPeriodData] = useState<{ chartName: string, groupName: string; itemsName: string[] }[]>([]);
   const [periodChartType, setPeriodChartType] = useState<{ intId: number; description: string }[]>([]);
 
   const [propertyCharts, setPropertyCharts] = useState<ChartDataItem[]>([]);
@@ -66,117 +68,97 @@ export default function DashboardContent() {
   const [periodCharts, setPeriodCharts] = useState<ChartDataItem[]>([]);
   const [projectImages, setProjectImages] = useState<Record<string, string>>({});
 
-
-
-
+  const [visibleActivitiesCount, setVisibleActivitiesCount] = useState(8);
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [activityData, setActivityData] = useState<Activity[] | null>(null);
+  const [activityFilterData, setActivityFilterData] = useState<ActivityFilter[] | null>(null);
+  const [statisticData, setStatisticData] = useState<Statistic[] | null>(null);
+
   const { setUserInfo } = useUserContext();
 
   const fetchActivities = async (token: string) => {
     const response = await axios.get(`${BASE_URL}promasterauthentication/dashboard/activities`, {
       headers: { AccessToken: token }
     });
-    return response.data.result;
+    const result = response.data.result;
+
+    setActivityData(result.activities);
+    setActivityFilterData(result.activityfilters);
+    if (result.activityfilters?.length > 0) {
+      setSelectedFilter(result.activityfilters[0]);
+    }
   };
+
 
   const fetchStatistics = async (token: string) => {
     const response = await axios.get(`${BASE_URL}promasterauthentication/dashboard/statistics`, {
       headers: { AccessToken: token }
     });
-    return response.data.result.statistics;
+
+    const statistics = response.data.result.statistics;
+    setStatisticData(statistics);
+
+    const stat = processStatistics(statistics);
+    setPropertyData(stat.propertyData);
+    setPropertyChartType(stat.propertyChartType);
+    setPersonnelData(stat.personnelData);
+    setPersonnelChartType(stat.personnelChartType);
+    setPeriodData(stat.periodData);
+    setPeriodChartType(stat.periodChartType);
+
+    setSelectedChart1(stat.propertyChartType[0]);
+    setSelectedChart2(stat.personnelChartType[0]);
+    setSelectedChart3(stat.periodChartType[0]);
+
+    setPropertyCharts(processCharts(statistics[0].records, stat.propertyChartType[0]?.description ?? ""));
+    setPersonnelCharts(processCharts(statistics[1].records, stat.personnelChartType[0]?.description ?? ""));
+    setPeriodCharts(processCharts(statistics[2].records, stat.periodChartType[0]?.description ?? ""));
   };
 
 
+
+  const fetchDashboard = async (token: string) => {
+    const response = await axios.get(`${BASE_URL}promasterauthentication/dashboard`, {
+      headers: { AccessToken: token }
+    });
+    const data = response.data.result;
+
+    setDashboardData(data);
+    setUserInfo(data.userprofile);
+
+    if (data.projecttags?.length > 0) {
+      setSelectedTag(data.projecttags[0]);
+    }
+
+    const photos = data.projects
+      .map((p: Project) => p.photo)
+      .filter((photo: string): photo is string => !!photo?.trim());
+
+    if (photos.length > 0) {
+      fetchAndExtractImages(photos, token, BASE_URL)
+        .then(setProjectImages)
+        .catch(() => console.log("can't download images"));
+    }
+  };
+
+
+
   useEffect(() => {
-    console.log('fetch');
-    const fetchDashboardData = async () => {
-      const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) return;
 
-      try {
-        const dashboardRes = await axios.get(
-          `${BASE_URL}promasterauthentication/dashboard`,
-          {
-            headers: {
-              AccessToken: accessToken,
-            }
-          }
-        );
-        const baseData = dashboardRes.data.result;
+    console.log("fetch");
 
-        // 2. Fetch activities
-        const activities = await fetchActivities(accessToken!);
-
-        // 3. Fetch statistics
-        const statistics = await fetchStatistics(accessToken!);
-
-        // Gộp dữ liệu lại
-        const fullData: DashboardData = {
-          ...baseData,
-          activities,
-          statistics,
-        };
-
-        setDashboardData(fullData);
-        const photos = baseData.projects
-          .map((p: any) => p.photo)
-          .filter((photo: string): photo is string => !!photo?.trim());
-
-        if (photos.length > 0) {
-          fetchAndExtractImages(photos, accessToken, BASE_URL)
-            .then(setProjectImages)
-            .catch(() => console.log("can't download images"));
-        }
-
-        setUserInfo(baseData.userprofile);
-        if (baseData.projecttags?.length > 0) {
-          setSelectedTag(baseData.projecttags[0]);
-        }
-
-        if (activities.activityfilters > 0) {
-          setSelectedFilter(baseData.activityfilters[0]);
-        }
-
-        if (statistics != null) {
-          const statisticData = processStatistics(statistics);
-          setPropertyData(statisticData.propertyData);
-          setPropertyChartType(statisticData.propertyChartType);
-          setPersonnelData(statisticData.personnelData);
-          setPersonnelChartType(statisticData.personnelChartType);
-          setPeriodData(statisticData.periodData);
-          setPeriodChartType(statisticData.periodChartType);
-
-          // Sau khi gán xong mới set selected
-          setSelectedChart1(statisticData.propertyChartType[0]);
-          setSelectedChart2(statisticData.personnelChartType[0]);
-          setSelectedChart3(statisticData.periodChartType[0]);
-
-          const propertyCharts = processCharts(
-            statistics[0].records,
-            selectedChart1?.description ?? statisticData.propertyChartType[0]?.description ?? ""
-          );
-          const personnelCharts = processCharts(
-            statistics[1].records,
-            statisticData.personnelChartType[0]?.description ?? ""
-          );
-          const periodCharts = processCharts(
-            statistics[2].records,
-            statisticData.periodChartType[0]?.description ?? ""
-          );
-
-          // Nếu cần lưu vào state:
-          setPropertyCharts(propertyCharts);
-          setPersonnelCharts(personnelCharts);
-          setPeriodCharts(periodCharts);
-        }
-      } catch (error) {
-        showErrorToast('Error fetching dashboard data: ' + error);
-        console.log('Error fetching dashboard data: ' + error);
-      }
-    };
-
-    fetchDashboardData();
+    fetchDashboard(accessToken).catch(err => showErrorToast("Dashboard error: " + err));
+    fetchActivities(accessToken).catch(err => showErrorToast("Activities error: " + err));
+    fetchStatistics(accessToken).catch(err => showErrorToast("Statistics error: " + err));
   }, []);
+
+
+  useEffect(() => {
+    setVisibleActivitiesCount(8); // Reset khi đổi filter
+  }, [selectedFilter]);
 
 
   return (
@@ -202,13 +184,13 @@ export default function DashboardContent() {
             dialogType={1}
             selected={selectedFilter!.intId}
             onConfirm={(intId) => {
-              const found = dashboardData?.activityfilters.find((item) => item.intId === intId);
+              const found = activityFilterData!.find((item) => item.intId === intId);
               if (found) {
                 setSelectedFilter(found);
               }
             }}
             onClose={() => setDialogFilterOpen(false)}
-            data={dashboardData?.activityfilters}
+            data={activityFilterData}
           />
 
         )}
@@ -222,8 +204,9 @@ export default function DashboardContent() {
               if (found) {
                 setSelectedChart1(found);
                 if (dashboardData) {
+                  setSelectedProperties([]);
                   const updatedCharts = processCharts(
-                    dashboardData.statistics[0].records,
+                    statisticData![0].records,
                     found.description
                   );
                   setPropertyCharts(updatedCharts);
@@ -246,7 +229,7 @@ export default function DashboardContent() {
                 setSelectedChart2(found);
                 if (dashboardData) {
                   const updatedCharts = processCharts(
-                    dashboardData.statistics[1].records,
+                    statisticData![1].records,
                     found.description
                   );
                   setPersonnelCharts(updatedCharts);
@@ -269,7 +252,7 @@ export default function DashboardContent() {
                 setSelectedChart3(found);
                 if (dashboardData) {
                   const updatedCharts = processCharts(
-                    dashboardData.statistics[2].records,
+                    statisticData![2].records,
                     found.description
                   );
                   setPeriodCharts(updatedCharts);
@@ -284,34 +267,61 @@ export default function DashboardContent() {
 
         {isPropertyDialogOpen && (
           <SelectDialog
-            data={propertyData}
-            onClose={() => setPropertyDialogOpen(false)}
-            onChange={(selected: string[]) => setSelectedProperties(selected)}
+            data={propertyData.filter(group => group.chartName === selectedChart1?.description)}
             selected={selectedProperties}
+            onClose={() => setPropertyDialogOpen(false)}
+            onConfirm={(selected: string[]) => {
+              setSelectedProperties(selected);
+              const newChartData = processCharts(
+                statisticData![0].records,
+                selectedChart1!.description,
+                selected
+              );
+              setPropertyCharts(newChartData);
+              setPropertyDialogOpen(false);
+            }}
           />
         )}
 
+
         {isGroupDialogOpen && (
           <GroupDialog
-            onClose={() => setGroupDialogOpen(false)}
-            groupData={personnelData}
+            groupData={personnelData.filter(group => group.chartName === selectedChart2?.description)}
             selectedGroups={selectedGroups}
-            onChange={(updatedMap) => {
+            onClose={() => setGroupDialogOpen(false)}
+            onConfirm={(updatedMap) => {
               setSelectedGroups(updatedMap);
+              const allSelectedItems = Object.values(updatedMap).flat();
+              const newChartData = processCharts(
+                statisticData![1].records,
+                selectedChart2!.description,
+                allSelectedItems
+              );
+              setPersonnelCharts(newChartData);
+              setGroupDialogOpen(false);
             }}
           />
         )}
 
         {isPeriodGroupDialogOpen && (
           <GroupDialog
-            onClose={() => setPeriodGroupDialogOpen(false)}
-            groupData={periodData}
+            groupData={periodData.filter(group => group.chartName === selectedChart3?.description)}
             selectedGroups={selectedPeriodGroups}
-            onChange={(updatedMap) => {
+            onClose={() => setPeriodGroupDialogOpen(false)}
+            onConfirm={(updatedMap) => {
               setSelectedPeriodGroups(updatedMap);
+              const allSelectedItems = Object.values(updatedMap).flat();
+              const newChartData = processCharts(
+                statisticData![2].records,
+                selectedChart3!.description,
+                allSelectedItems
+              );
+              setPeriodCharts(newChartData);
+              setPeriodGroupDialogOpen(false);
             }}
           />
         )}
+
 
 
         {/* Projects */}
@@ -404,7 +414,7 @@ export default function DashboardContent() {
                   className="cursor-pointer"
                   src={IconPaths.filter}
                   onClick={() =>
-                    !dashboardData?.activityfilters
+                    !activityFilterData
                       ? null
                       : setDialogFilterOpen(!isDialogFilterOpen)
                   }
@@ -412,51 +422,51 @@ export default function DashboardContent() {
                 />
               </div>
 
+              {/* Body */}
               <div className="flex flex-col flex-1 space-y-4">
-                {!dashboardData ? (
+                {!activityData ? (
                   Array(3)
                     .fill(0)
                     .map((_, idx) => <SkeletonBox key={idx} height="h-16" className="w-full" />)
                 ) : (
                   <>
-                    {dashboardData.activities &&
-                      dashboardData.activities.filter((activity) => activity.category === selectedFilter?.intId).length > 0 ? (
-                      dashboardData.activities
+                    {activityData.filter((activity) => activity.category === selectedFilter?.intId).length > 0 ? (
+                      activityData
                         .filter((activity) => activity.category === selectedFilter?.intId)
-                        .map((activity) => (
+                        .slice(0, visibleActivitiesCount)
+                        .map((activity, idx) => (
                           <StatusCard
-                            key={activity.category}
+                            key={idx}
                             activity={activity}
                             activityName={
-                              dashboardData.activityfilters[activity.category]?.description
+                              activityFilterData?.find(item => item.intId === activity.category)?.description || "N/A"
                             }
                           />
                         ))
                     ) : (
-                      <div>
-                        <span style={{ fontSize: 14, color: colors.greyInputText }}>
-                          Nothing to show
-                        </span>
-                      </div>
+                      <span style={{ fontSize: 14, color: colors.greyInputText }}>Nothing to show</span>
                     )}
                   </>
                 )}
               </div>
 
-              {dashboardData?.activities && dashboardData.activities.length > 0 && (
-                <div className="flex justify-end mt-4">
-                  <span
-                    style={{
-                      fontSize: 14,
-                      color: colors.redRuby,
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    }}
-                  >
-                    View More
-                  </span>
-                </div>
-              )}
+              {/* View More */}
+              {activityData &&
+                activityData.filter((activity) => activity.category === selectedFilter?.intId).length > visibleActivitiesCount && (
+                  <div className="flex justify-end mt-4">
+                    <span
+                      onClick={() => setVisibleActivitiesCount(prev => prev + 8)}
+                      style={{
+                        fontSize: 14,
+                        color: colors.redRuby,
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      }}
+                    >
+                      View More
+                    </span>
+                  </div>
+                )}
             </CardContent>
           </Card>
 
@@ -472,7 +482,7 @@ export default function DashboardContent() {
 
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
-                      {!dashboardData ? (
+                      {!statisticData ? (
                         <SkeletonBox height="h-6" width="w-32" />
                       ) : selectedChart1 ? (
                         <>
@@ -488,7 +498,7 @@ export default function DashboardContent() {
                         <span style={{ fontSize: 14, color: colors.greyInputText }}>Not available</span>
                       )}
                     </div>
-                    {!dashboardData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
+                    {!statisticData ? <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
                       : <Button onClick={() => setPropertyDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                         Property
                         <ChevronDown size={14} />
@@ -497,7 +507,7 @@ export default function DashboardContent() {
                   </div>
                 </div>
 
-                {dashboardData ? (
+                {statisticData ? (
                   <ChartCarousel
                     key={`property-${selectedChart1?.intId ?? 0}`}
                     charts={propertyCharts}
@@ -514,7 +524,7 @@ export default function DashboardContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
                       <div className="flex items-center gap-2">
-                        {!dashboardData ? (
+                        {!statisticData ? (
                           <SkeletonBox height="h-6" width="w-32" />
                         ) : selectedChart2 ? (
                           <>
@@ -531,14 +541,14 @@ export default function DashboardContent() {
                         )}
                       </div>
                     </div>
-                    {dashboardData ? <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    {statisticData ? <Button onClick={() => setGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
                     </Button> : <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
                     }
 
                   </div>
-                  {dashboardData ? (
+                  {statisticData ? (
                     <ChartCarousel
                       key={`personnel-${selectedChart2?.intId ?? 0}`}
                       charts={personnelCharts}
@@ -553,7 +563,7 @@ export default function DashboardContent() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-2 cursor-pointer">
                       <div className="flex items-center gap-2">
-                        {!dashboardData ? (
+                        {!statisticData ? (
                           <SkeletonBox height="h-6" width="w-32" />
                         ) : selectedChart3 ? (
                           <>
@@ -570,17 +580,23 @@ export default function DashboardContent() {
                         )}
                       </div>
                     </div>
-                    {dashboardData ? <Button onClick={() => setPeriodGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
+                    {statisticData ? <Button onClick={() => setPeriodGroupDialogOpen(true)} variant="custom" className="rounded-full flex items-center gap-4 cursor-pointer" style={{ padding: '6px 16px', border: `1px solid ${colors.redRuby}`, color: colors.blackDark, fontSize: '14px', backgroundColor: 'transparent' }}>
                       Group
                       <ChevronDown size={14} />
                     </Button> : <SkeletonBox height="h-8" width="w-[110px]" rounded="rounded-full" />
                     }
 
                   </div>
-                  <ChartCarousel
-                    key={`period-${selectedChart2?.intId ?? 0}`}
-                    charts={periodCharts}
-                  />
+                  {statisticData ? (
+                    <ChartCarousel
+                      key={`period-${selectedChart3?.intId ?? 0}`}
+                      charts={periodCharts}
+                    />
+
+                  ) : (
+                    <SkeletonBox height="h-[200px]" className="w-full rounded-xl" />
+                  )}
+
 
                 </div>
 

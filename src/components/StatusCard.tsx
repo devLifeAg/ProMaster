@@ -1,6 +1,6 @@
 import React from 'react';
 import colors, {hexToRgba} from '../styles/colors';
-import type { Activity } from '../models/DashboardData';
+import type { Activity } from '../models/ActivityData';
 
 // Loại trạng thái
 // type StatusType = 'Booking' | 'Appointment' | 'Timeline';

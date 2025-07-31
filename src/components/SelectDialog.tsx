@@ -10,13 +10,13 @@ export interface ListGroup {
 }
 
 interface PropertyDialogProps {
-    onClose: () => void;
-    data: ListGroup[] | string[];
-    onChange?: (selected: string[]) => void;
-    onConfirm?: (selected: string[]) => void;
-    title?: string;
-    selected?: string[];
+  onClose: () => void;
+  data: ListGroup[] | string[];
+  onConfirm?: (selected: string[]) => void;
+  title?: string;
+  selected?: string[];
 }
+
 
 export default function PropertyDialog({ onClose, data, title, selected = [], ...props }: PropertyDialogProps) {
     const dialogRef = useRef<HTMLDivElement>(null);

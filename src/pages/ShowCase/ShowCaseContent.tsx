@@ -94,7 +94,7 @@ export default function ShowcaseContent() {
               <div key={sectionIndex} className="w-full">
                 {/* Section skeleton header */}
                 <div
-                  className="px-4 py-2 mt-9 rounded-md h-8 animate-pulse"
+                  className="px-4 py-2 mt-9 h-8 animate-pulse"
                   style={{ background: colors.redRuby, opacity: 0.4 }}
                 />
 

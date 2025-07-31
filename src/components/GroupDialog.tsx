@@ -15,10 +15,11 @@ interface GroupDialogProps {
   onClose: () => void;
   selectedGroups?: SelectedGroupsMap;
   groupData: ListGroup[];
-  onChange?: (updated: SelectedGroupsMap) => void;
+  onConfirm?: (updated: SelectedGroupsMap) => void;
 }
 
-export default function GroupDialog({ onClose, selectedGroups: initialSelectedGroups, onChange, groupData }: GroupDialogProps) {
+
+export default function GroupDialog({ onClose, selectedGroups: initialSelectedGroups, onConfirm, groupData }: GroupDialogProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const tabKeys = groupData.map(g => g.groupName);
   const [activeTab, setActiveTab] = useState<string>(tabKeys[0] ?? "");
@@ -40,12 +41,19 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        const reset: SelectedGroupsMap = {};
-        groupData.forEach(group => {
-          reset[group.groupName] = [];
-        });
-        setSelectedGroups(reset);
-        onChange?.(reset);
+        if (initialSelectedGroups) {
+          // Nếu có giá trị truyền vào thì reset về nó
+          setSelectedGroups(initialSelectedGroups);
+          onConfirm?.(initialSelectedGroups);
+        } else {
+          // Nếu không có thì clear hết
+          const cleared: SelectedGroupsMap = {};
+          groupData.forEach(group => {
+            cleared[group.groupName] = [];
+          });
+          setSelectedGroups(cleared);
+          onConfirm?.(cleared);
+        }
         onClose();
       }
     };
@@ -53,7 +61,7 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
     return () => {
       document.removeEventListener("mousedown", handleClickOutside, true);
     };
-  }, [onClose, onChange, groupData]);
+  }, [onClose, onConfirm, groupData, initialSelectedGroups]);
 
   const handleConfirmSelectDialog = (selected: string[]) => {
     const updated = {
@@ -61,10 +69,11 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
       [activeTab]: selected,
     };
     setSelectedGroups(updated);
-    setShowSelectDialog(false);
+    setShowSelectDialog(false); // không đóng GroupDialog
     setPendingSelected([]);
-    onChange?.(updated);
+    // không gọi onClose ở đây
   };
+
 
   const handleOpenSelectDialog = () => {
     setPendingSelected(selectedGroups[activeTab] || []);
@@ -79,7 +88,7 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
       reset[group.groupName] = [];
     });
     setSelectedGroups(reset);
-    onChange?.(reset);
+    onConfirm?.(reset);
   };
 
   if (showSelectDialog) {
@@ -99,7 +108,25 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
   }
 
   function DisplayTags({ items }: { items: string[] }) {
-    const maxShow = 3;
+    const [maxShow, setMaxShow] = useState(3);
+
+    useEffect(() => {
+      const updateMaxShow = () => {
+        const width = window.innerWidth;
+        if (width >= 1024) {
+          setMaxShow(3); // lg trở lên
+        } else if (width >= 640) {
+          setMaxShow(3); // sm - md
+        } else {
+          setMaxShow(2); // xs
+        }
+      };
+
+      updateMaxShow();
+      window.addEventListener("resize", updateMaxShow);
+      return () => window.removeEventListener("resize", updateMaxShow);
+    }, []);
+
     const shown = items.slice(0, maxShow);
     const more = items.length - maxShow;
 
@@ -111,9 +138,8 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
         {shown.map((item) => (
           <span
             key={item}
-            className="text-base font-medium text-gray-800 bg-gray-100 rounded-md px-2 py-1"
+            className="max-w-[80px] lg:max-w-[120px] text-base font-medium text-gray-800 bg-gray-100 rounded-md px-2 py-1"
             style={{
-              maxWidth: 120,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -225,14 +251,14 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
         <div className="px-6 py-6 border-t">
           <button
             onClick={() => {
-              onChange?.(selectedGroups);
-              onClose();
+              onConfirm?.(selectedGroups);
             }}
             className="w-full py-2 rounded-full text-white font-semibold cursor-pointer"
             style={{ backgroundColor: colors.redRuby }}
           >
             Confirm
           </button>
+
         </div>
       </div>
     </div>
