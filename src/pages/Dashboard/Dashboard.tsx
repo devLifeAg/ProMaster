@@ -157,7 +157,7 @@ export default function DashboardContent() {
 
 
   useEffect(() => {
-    setVisibleActivitiesCount(8); // Reset khi đổi filter
+    setVisibleActivitiesCount(6); // Reset khi đổi filter
   }, [selectedFilter]);
 
 
@@ -438,9 +438,10 @@ export default function DashboardContent() {
                           <StatusCard
                             key={idx}
                             activity={activity}
-                            activityName={
-                              activityFilterData?.find(item => item.intId === activity.category)?.description || "N/A"
-                            }
+                            activityFilter={activityFilterData!}
+                            // activityName={
+                            //   activityFilterData?.find(item => item.intId === activity.category)?.description || "N/A"
+                            // }
                           />
                         ))
                     ) : (
@@ -455,7 +456,7 @@ export default function DashboardContent() {
                 activityData.filter((activity) => activity.category === selectedFilter?.intId).length > visibleActivitiesCount && (
                   <div className="flex justify-end mt-4">
                     <span
-                      onClick={() => setVisibleActivitiesCount(prev => prev + 8)}
+                      onClick={() => setVisibleActivitiesCount(prev => prev + 6)}
                       style={{
                         fontSize: 14,
                         color: colors.redRuby,

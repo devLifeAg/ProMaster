@@ -20,6 +20,14 @@ const colors = {
   bookedStatus: '#3B82F6',
   reserveStatus: '#F97316',
 
+  lightGreen: '#C9F2EE',
+  lightBlue: '#DAE9FF',
+  lightOrange: '#FFDBC2',
+
+  Active_Bg: '#D1FADD',
+  appointmentColor: '#5CB8B2',
+  timelineColor: '#F88E67',
+
   activeStatus: '#25AD5E',
   waitingStatus: '#F5C30B'
 };
