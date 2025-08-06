@@ -60,18 +60,6 @@ input::placeholder {
     animation: slideOut 0.5s ease-out forwards;
   }
 
-  /* Dành cho Webkit (Chrome, Safari) */
-/* ::-webkit-scrollbar {
-  display: none;
-} */
-
-/* Dành cho toàn bộ phần tử cụ thể */
-/* .scroll-hidden {
-  overflow-y: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-} */
-
 
   @keyframes slideIn {
     from { transform: translateX(50px); opacity: 0; }

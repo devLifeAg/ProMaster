@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import ShowcaseItem from "../../items/ShowCaseItem";
-// import { BsBookmark } from "react-icons/bs";
 import fonts from '../../styles/fonts';
 import colors from "../../styles/colors";
 import { BASE_URL } from "../../constants/consts";
@@ -64,7 +63,7 @@ export default function ShowcaseContent() {
         setGroupedData(grouped);
         setIsLoading(false);
 
-        // fetch ảnh
+        // fetch images
         const photoList = projects
           .map(p => p.photo)
           .filter(p => !!p?.trim());
@@ -87,7 +86,7 @@ export default function ShowcaseContent() {
     <div className="grid grid-cols-10 w-full">
       <div className="col-span-10 mt-4 w-full">
         {isLoading ? (
-          // Hiển thị skeleton khi đang loading hoặc chưa có ảnh
+          // Display skeleton while loading or not have images yet
           <>
             {Array.from({ length: 3 }).map((_, sectionIndex) => (
               <div key={sectionIndex} className="w-full">
@@ -109,7 +108,7 @@ export default function ShowcaseContent() {
             ))}
           </>
         ) : (
-          // Render dữ liệu thật
+          // Render real data
           groupedData.map((section, sectionIndex) => (
             <div key={sectionIndex} className="w-full">
               {/* Section header */}
@@ -130,7 +129,7 @@ export default function ShowcaseContent() {
               <div className="w-full overflow-x-auto">
                 <div className="flex gap-4 p-4 w-max">
                   {section.items.map((item) => {
-                    const imageSrc = imageMap[item.photo]; // undefined nếu chưa có
+                    const imageSrc = imageMap[item.photo]; // undefined if null
                     const isImageReady = Object.keys(imageMap).length > 0;
                     return (
                       <ShowcaseItem
@@ -139,7 +138,7 @@ export default function ShowcaseContent() {
                         tag={item.tagId}
                         pinned={false}
                         loadImageDone={isImageReady}
-                        image={imageSrc} // nếu undefined sẽ fallback trong ShowCaseItem
+                        image={imageSrc} // fallback in ShowCaseItem if undefined
                         availability={item.unitStatus === '' ? undefined : item.unitStatus}
                         address={item.projectAddress === '' ? undefined : item.projectAddress}
                       />

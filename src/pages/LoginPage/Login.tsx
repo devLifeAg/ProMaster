@@ -67,7 +67,7 @@ const Login: React.FC = () => {
   const langRef = useRef<HTMLDivElement>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
 
-  // Click outside để đóng Language hoặc Settings
+  // Click outside to close Language or Settings
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (blockOutsideClick) return;
@@ -86,7 +86,7 @@ const Login: React.FC = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
-    checkMobile(); // kiểm tra lần đầu khi load
+    checkMobile(); // check first time
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);

@@ -42,11 +42,11 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
     const handleClickOutside = (event: MouseEvent) => {
       if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
         if (initialSelectedGroups) {
-          // Nếu có giá trị truyền vào thì reset về nó
+          // If a value is provided, reset to that value
           setSelectedGroups(initialSelectedGroups);
           onConfirm?.(initialSelectedGroups);
         } else {
-          // Nếu không có thì clear hết
+          // If no value is provided, clear everything
           const cleared: SelectedGroupsMap = {};
           groupData.forEach(group => {
             cleared[group.groupName] = [];
@@ -69,9 +69,9 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
       [activeTab]: selected,
     };
     setSelectedGroups(updated);
-    setShowSelectDialog(false); // không đóng GroupDialog
+    setShowSelectDialog(false); // Not close GroupDialog
     setPendingSelected([]);
-    // không gọi onClose ở đây
+    // Not call onClose here
   };
 
 
@@ -114,7 +114,7 @@ export default function GroupDialog({ onClose, selectedGroups: initialSelectedGr
       const updateMaxShow = () => {
         const width = window.innerWidth;
         if (width >= 1024) {
-          setMaxShow(3); // lg trở lên
+          setMaxShow(3); // lg above
         } else if (width >= 640) {
           setMaxShow(3); // sm - md
         } else {

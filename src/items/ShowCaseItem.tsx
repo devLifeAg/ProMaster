@@ -42,9 +42,9 @@ export default function ShowcaseItem({
     const [isPinned, setIsPinned] = useState(pinned);
 
     const handleTogglePin = (e: React.MouseEvent) => {
-        e.stopPropagation(); // tránh propagate click lên cha nếu cần
+        e.stopPropagation(); // Prevent click event from propagating to parent if necessary
         setIsPinned(!isPinned);
-        onTogglePin?.(); // gọi về cha nếu có
+        onTogglePin?.(); // Call parent callback if provided
     };
 
     return (

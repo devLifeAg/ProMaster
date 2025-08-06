@@ -1,5 +1,3 @@
-// src/styles/colors.ts
-
 const colors = {
   topLeftGradient: '#DB2C2C',
   bottomRightGradient: '#7C1325',

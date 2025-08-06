@@ -3,16 +3,12 @@ import colors, { hexToRgba } from '../styles/colors';
 import fonts from '../styles/fonts';
 import type { Activity, ActivityFilter } from '../models/ActivityData';
 
-// Loại trạng thái
-// type StatusType = 'Booking' | 'Appointment' | 'Timeline';
-
 interface StatusCardProps {
   activity: Activity,
   activityFilter: ActivityFilter[]
-  // activityName: string
 }
 
-// Mapping màu theo loại
+// Map colors based on type
 const statusColors: Record<number, { color: string; badgeText?: string, tagColor: string, titleColor: string, badgeBackground?: string, badgeTextColor?: string }> = {
   2: {
     color: colors.bookedStatus,

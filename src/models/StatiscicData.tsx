@@ -36,7 +36,7 @@ export interface ChartDataItem {
 }
 
 export function processCharts(statistics: StatisticRecord[], selectedChartName: string, listName: string[] = []): ChartDataItem[] {
-  // Lọc theo chartName và nếu có listName thì lọc thêm itemColName
+  // Filter by chartName, and by itemColName if listName is provided
   const filtered = statistics.filter(item =>
     item.chartName === selectedChartName &&
     (listName.length === 0 || listName.includes(item.chartIdentityName))

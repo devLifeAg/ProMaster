@@ -30,8 +30,5 @@ export interface DashboardData {
   userprofile: UserProfile;
   projecttags: ProjectTag[];
   projects: Project[];
-  // activityfilters: ActivityFilter[];
-  // activities: Activity[];
-  // statistics: Statistic[];
 }
 

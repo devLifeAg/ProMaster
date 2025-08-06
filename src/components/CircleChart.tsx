@@ -1,4 +1,3 @@
-// CircleChart.tsx
 import { PieChart, Pie, Cell } from "recharts";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
@@ -30,7 +29,7 @@ export const CircleChart = ({ title, total, data }: CircleChartProps) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       setChartReady(true);
-    }, 2000); // delay ngắn để render xong PieChart
+    }, 2000); // Short delay to ensure PieChart finishes rendering
 
     return () => clearTimeout(timeout);
   }, [data]);

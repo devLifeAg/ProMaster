@@ -157,7 +157,7 @@ export default function DashboardContent() {
 
 
   useEffect(() => {
-    setVisibleActivitiesCount(6); // Reset khi đổi filter
+    setVisibleActivitiesCount(6); // Reset when filter changes
   }, [selectedFilter]);
 
 

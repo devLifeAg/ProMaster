@@ -18,7 +18,7 @@ export async function fetchAndExtractImages(
           "Content-Type": "application/json",
           AccessToken: accessToken,
         },
-        responseType: "arraybuffer", // cần để giải nén
+        responseType: "arraybuffer", // need arraybuffer to unzip
       }
     );
 
@@ -30,8 +30,6 @@ export async function fetchAndExtractImages(
         const ext = filename.split('.').pop()?.toLowerCase();
         const isImage = ['png', 'jpg', 'jpeg', 'webp'].includes(ext ?? '');
         if (!isImage) continue;
-
-        // console.log("Extracted image:", filename);
 
         const blob = await file.async("blob");
         const url = URL.createObjectURL(blob);

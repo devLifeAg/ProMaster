@@ -172,7 +172,7 @@ export default function PropertyDialog({ onClose, data, title, selected = [], ..
                         className="w-full py-2 rounded-full text-white font-semibold cursor-pointer"
                         style={{ backgroundColor: colors.redRuby }}
                         onClick={() => {
-                            if (props.onConfirm) props.onConfirm(selectedState); // truyền selectedState
+                            if (props.onConfirm) props.onConfirm(selectedState); // Pass selectedState
                             else onClose();
                         }}
                     >

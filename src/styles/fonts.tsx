@@ -1,5 +1,3 @@
-// src/styles/fonts.ts
-
 const fonts = {
   outfit: "'Outfit', sans-serif",
   inter: "'Inter', sans-serif",
