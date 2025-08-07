@@ -1,26 +1,26 @@
-import { Card, CardContent } from "../../components/Card";
-import { Button } from "../../components/Button";
+import { Card, CardContent } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
 import { ChevronDown } from "lucide-react";
 import colors from '../../styles/colors';
-import StatusCard from '../../components/StatusCard';
-import { IconPaths } from '../../constants/consts';
+import StatusCard from '../../components/layout/StatusCard';
+import { IconPaths } from '../../utils/constants';
 import fonts from "../../styles/fonts";
-import TagDialog from "../../components/DashboardDialog";
-import SelectDialog from "../../components/SelectDialog";
-import GroupDialog from "../../components/GroupDialog";
+import TagDialog from "../../components/dialogs/DashboardDialog";
+import SelectDialog from "../../components/dialogs/SelectDialog";
+import GroupDialog from "../../components/dialogs/GroupDialog";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../../constants/consts';
-import { showErrorToast } from '../../components/ToasService';
-import type { DashboardData, Project } from '../../models/DashboardData';
-import type { Activity, ActivityFilter } from '../../models/ActivityData';
-import type { Statistic, ChartDataItem } from '../../models/StatiscicData';
-import { processStatistics, processCharts } from '../../models/StatiscicData';
-import ChartCarousel from "../../components/ChartCarousel";
-import { fetchAndExtractImages } from "../../utils/FetchAndExtractImages";
+import { BASE_URL } from '../../utils/constants';
+import { showErrorToast } from '../../components/feedback/ToastService';
+import type { DashboardData, Project } from '../../types/DashboardData';
+import type { Activity, ActivityFilter } from '../../types/ActivityData';
+import type { Statistic, ChartDataItem } from '../../types/StatiscicData';
+import { processStatistics, processCharts } from '../../types/StatiscicData';
+import ChartCarousel from "../../components/charts/ChartCarousel";
+import { fetchAndExtractImages } from "../../utils/helpers/FetchAndExtractImages";
 
 import { useUserContext } from '../../contexts/UserContext';
-import SkeletonBox from '../../components/SkeletonBox';
+import SkeletonBox from '../../components/layout/SkeletonBox';
 
 const tagColors: Record<number, string> = {
   67845: colors.bookedStatus,
@@ -168,7 +168,7 @@ export default function DashboardContent() {
           <TagDialog
             dialogType={0}
             selected={selectedTag!.intId}
-            onConfirm={(intId) => {
+            onConfirm={(intId: number) => {
               const found = dashboardData?.projecttags.find((item) => item.intId === intId);
               if (found) {
                 setSelectedTag(found);
@@ -183,7 +183,7 @@ export default function DashboardContent() {
           <TagDialog
             dialogType={1}
             selected={selectedFilter!.intId}
-            onConfirm={(intId) => {
+            onConfirm={(intId: number) => {
               const found = activityFilterData!.find((item) => item.intId === intId);
               if (found) {
                 setSelectedFilter(found);
@@ -199,7 +199,7 @@ export default function DashboardContent() {
           <TagDialog
             dialogType={2}
             selected={selectedChart1!.intId}
-            onConfirm={(intId) => {
+            onConfirm={(intId: number) => {
               const found = propertyChartType.find((item) => item.intId === intId);
               if (found) {
                 setSelectedChart1(found);
@@ -223,7 +223,7 @@ export default function DashboardContent() {
           <TagDialog
             dialogType={2}
             selected={selectedChart2!.intId}
-            onConfirm={(intId) => {
+            onConfirm={(intId: number) => {
               const found = personnelChartType.find((item) => item.intId === intId);
               if (found) {
                 setSelectedChart2(found);
@@ -247,7 +247,7 @@ export default function DashboardContent() {
           <TagDialog
             dialogType={2}
             selected={selectedChart3!.intId}
-            onConfirm={(intId) => {
+            onConfirm={(intId: number) => {
               const found = periodChartType.find((item) => item.intId === intId);
               if (found) {
                 setSelectedChart3(found);
@@ -291,9 +291,9 @@ export default function DashboardContent() {
             groupData={personnelData.filter(group => group.chartName == selectedChart2?.description)}
             selectedGroups={selectedGroups}
             onClose={() => setGroupDialogOpen(false)}
-            onConfirm={(updatedMap) => {
+            onConfirm={(updatedMap: any) => {
               setSelectedGroups(updatedMap);
-              const allSelectedItems = Object.values(updatedMap).flat();
+              const allSelectedItems = Object.values(updatedMap).flat() as string[];
               const newChartData = processCharts(
                 statisticData![1].records,
                 selectedChart2!.description,
@@ -310,9 +310,9 @@ export default function DashboardContent() {
             groupData={periodData.filter(group => group.chartName === selectedChart3?.description)}
             selectedGroups={selectedPeriodGroups}
             onClose={() => setPeriodGroupDialogOpen(false)}
-            onConfirm={(updatedMap) => {
+            onConfirm={(updatedMap: any) => {
               setSelectedPeriodGroups(updatedMap);
-              const allSelectedItems = Object.values(updatedMap).flat();
+              const allSelectedItems = Object.values(updatedMap).flat() as string[];
               const newChartData = processCharts(
                 statisticData![2].records,
                 selectedChart3!.description,

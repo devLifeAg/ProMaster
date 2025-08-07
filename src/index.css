@@ -21,7 +21,7 @@ input::placeholder {
   appearance: none;           /* Firefox */
   -webkit-appearance: none;   /* Chrome */
   -moz-appearance: none;      /* Safari */
-  background: transparent;    /* Xóa background mặc định */
+  background: transparent;    /* Delete default background */
 }
 
 .checkbox-inner {

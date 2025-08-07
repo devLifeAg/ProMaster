@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import colors from '../../styles/colors';
 import { LogOut, Menu, Search, X } from "lucide-react";
-import { ImagePaths, IconPaths } from '../../constants/consts';
+import { ImagePaths, IconPaths } from '../../utils/constants';
 import { useUserContext } from '../../contexts/UserContext';
 import { useAliveController } from 'react-activation';
 const menuItems = [

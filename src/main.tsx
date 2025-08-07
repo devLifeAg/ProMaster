@@ -1,11 +1,20 @@
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import App from './App.tsx';
 
-createRoot(document.getElementById('root')!).render(
-  //remove strictMode to avoid double fetch
-  // <StrictMode>
+/**
+ * Application entry point
+ * Renders the main App component into the DOM
+ * 
+ * Note: StrictMode is disabled to prevent double API calls
+ * during development, but can be re-enabled for production
+ */
+const root = createRoot(document.getElementById('root')!);
+
+root.render(
+  // StrictMode disabled to avoid double fetch calls during development
+  // Uncomment for production to catch potential issues
+  // <React.StrictMode>
     <App />
-
-  // </StrictMode>,
-)
+  // </React.StrictMode>
+);

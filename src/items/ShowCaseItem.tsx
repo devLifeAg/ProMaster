@@ -2,8 +2,8 @@ import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import colors from "../styles/colors";
 import fonts from '../styles/fonts';
 import { useState } from "react";
-import { IconPaths, ImagePaths } from "../constants/consts";
-import SkeletonBox from '../components/SkeletonBox';
+import { IconPaths, ImagePaths } from "../utils/constants";
+import SkeletonBox from '../components/layout/SkeletonBox';
 
 export type ShowcaseItemProps = {
     title: string;

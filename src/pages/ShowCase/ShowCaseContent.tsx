@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import ShowcaseItem from "../../items/ShowCaseItem";
 import fonts from '../../styles/fonts';
 import colors from "../../styles/colors";
-import { BASE_URL } from "../../constants/consts";
+import { BASE_URL } from "../../utils/constants";
 import axios from "axios";
-import { fetchAndExtractImages } from "../../utils/FetchAndExtractImages";
+import { fetchAndExtractImages } from "../../utils/helpers/FetchAndExtractImages";
 
 type ShowcaseAPIItem = {
   ticketId: number;

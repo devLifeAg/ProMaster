@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useRef, useEffect } from 'react';
 import { FaCog } from 'react-icons/fa';
-import colors from '../../styles/colors';
+import colors, { redGradient } from '../../styles/colors';
 import fonts from '../../styles/fonts';
 import warningImg from '../../assets/warning.png';
-import CustomInput from '../../components/CustomInput';
+import CustomInput from '../../components/ui/Input';
 import { getDeviceInfo } from "./getDeviceInfo";
-import { showSuccessToast, showErrorToast } from '../../components/ToasService';
+import { showSuccessToast, showErrorToast } from '../../components/feedback/ToastService';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import { BASE_URL } from '../../constants/consts';
+import { BASE_URL } from '../../utils/constants';
 import FixedTopIcons from './FixedTopIcon';
 
 const LanguageDialog = ({ currentLang, onSelect }: { currentLang: string; onSelect: (lang: string) => void }) => {
@@ -162,7 +162,7 @@ const Login: React.FC = () => {
 
 
       <div className="flex flex-col lg:flex-row w-screen h-screen relative"
-        style={{ background: colors.redGradient() }}>
+        style={{ background: redGradient() }}>
 
         {/* Overlay cho Language */}
         {showLanguage && (
